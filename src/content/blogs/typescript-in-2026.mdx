@@ -1,0 +1,65 @@
+---
+title: "Getting Started with TypeScript in 2026"
+description: "A practical guide to TypeScript fundamentals, strict mode, and patterns I use daily in my projects."
+date: 2026-02-20
+tags: ["TypeScript", "Tutorial", "Programming"]
+---
+
+## Why TypeScript?
+
+TypeScript has become the de-facto standard for JavaScript projects. In 2026, the ecosystem support is so mature that there's very little reason _not_ to use it.
+
+### Key Benefits
+
+- **Catch errors at compile time** instead of runtime
+- **Better IDE support** — autocompletion, refactoring, jump-to-definition
+- **Self-documenting code** — types serve as inline documentation
+- **Safer refactoring** — change a type and see all affected code instantly
+
+## Setting Up Strict Mode
+
+Always use strict mode. It catches more bugs and enforces better practices:
+
+```json
+{
+  "compilerOptions": {
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitReturns": true
+  }
+}
+```
+
+## Patterns I Use Daily
+
+### Discriminated Unions
+
+```typescript
+type Result<T> = { success: true; data: T } | { success: false; error: string };
+
+function handleResult(result: Result<User>) {
+  if (result.success) {
+    // TypeScript knows result.data exists here
+    console.log(result.data.name);
+  } else {
+    // TypeScript knows result.error exists here
+    console.error(result.error);
+  }
+}
+```
+
+### Template Literal Types
+
+```typescript
+type Route = `/api/${string}`;
+type EventName = `on${Capitalize<string>}`;
+```
+
+## Resources
+
+- [TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/) — the official guide
+- [Type Challenges](https://github.com/type-challenges/type-challenges) — level up your type-fu
+
+---
+
+_TypeScript isn't just a tool — it's a way of thinking about your code more carefully._

@@ -1,0 +1,167 @@
+---
+const currentPath = Astro.url.pathname;
+
+const navLinks = [
+  { href: '/', label: 'Home' },
+  { href: '/projects', label: 'Projects' },
+  { href: '/blogs', label: 'Blogs' },
+  { href: '/resources', label: 'Resources' },
+];
+---
+
+<nav class="nav">
+  <div class="nav-inner container">
+    <a href="/" class="nav-logo">
+      <span class="logo-bracket">&lt;</span>JW<span class="logo-bracket"> /&gt;</span>
+    </a>
+
+    <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+      <span class="hamburger"></span>
+    </button>
+
+    <ul class="nav-links">
+      {navLinks.map(link => (
+        <li>
+          <a
+            href={link.href}
+            class:list={['nav-link', { active: currentPath === link.href || (link.href !== '/' && currentPath.startsWith(link.href)) }]}
+          >
+            {link.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</nav>
+
+<style>
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--color-border);
+    height: var(--nav-height);
+    display: flex;
+    align-items: center;
+  }
+
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .nav-logo {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text-heading);
+    letter-spacing: -0.025em;
+  }
+
+  .nav-logo:hover {
+    color: var(--color-accent);
+  }
+
+  .logo-bracket {
+    color: var(--color-accent);
+  }
+
+  .nav-links {
+    display: flex;
+    list-style: none;
+    gap: var(--space-xl);
+    padding: 0;
+  }
+
+  .nav-link {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color var(--transition-fast);
+    position: relative;
+  }
+
+  .nav-link:hover,
+  .nav-link.active {
+    color: var(--color-accent);
+  }
+
+  .nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -0.375rem;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--gradient-accent);
+    border-radius: 1px;
+  }
+
+  .nav-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: var(--space-sm);
+  }
+
+  .hamburger,
+  .hamburger::before,
+  .hamburger::after {
+    display: block;
+    width: 1.5rem;
+    height: 2px;
+    background: var(--color-text);
+    border-radius: 1px;
+    transition: transform var(--transition-normal);
+  }
+
+  .hamburger {
+    position: relative;
+  }
+
+  .hamburger::before,
+  .hamburger::after {
+    content: '';
+    position: absolute;
+    left: 0;
+  }
+
+  .hamburger::before { top: -6px; }
+  .hamburger::after { top: 6px; }
+
+  @media (max-width: 768px) {
+    .nav-toggle {
+      display: block;
+    }
+
+    .nav-links {
+      display: none;
+      position: absolute;
+      top: var(--nav-height);
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      background: var(--color-bg);
+      border-bottom: 1px solid var(--color-border);
+      padding: var(--space-lg);
+      gap: var(--space-md);
+    }
+
+    .nav-links.open {
+      display: flex;
+    }
+  }
+</style>
+
+<script>
+  const toggle = document.querySelector('.nav-toggle');
+  const links = document.querySelector('.nav-links');
+  toggle?.addEventListener('click', () => {
+    links?.classList.toggle('open');
+    const isOpen = links?.classList.contains('open');
+    toggle.setAttribute('aria-expanded', String(isOpen));
+  });
+</script>

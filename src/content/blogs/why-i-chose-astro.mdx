@@ -1,0 +1,51 @@
+---
+title: "Why I Chose Astro for My Personal Site"
+description: "A breakdown of why Astro's static-first, MDX-friendly approach was the perfect fit for a personal portfolio and blog."
+date: 2026-02-27
+tags: ["Astro", "Web Dev", "MDX"]
+---
+
+## The Problem
+
+I needed a personal site that was:
+
+1. **Fast** — no loading spinners, instant page loads
+2. **Easy to update** — write in Markdown, not JSX
+3. **Cheap to host** — static files on object storage
+4. **Flexible** — support rich components when needed
+
+## Why Not Next.js or Gatsby?
+
+Both are great frameworks, but they ship JavaScript by default. For a content-heavy portfolio, I don't _need_ client-side hydration on every page.
+
+> Ship less JavaScript. Your readers will thank you.
+
+## Enter Astro
+
+Astro's "islands architecture" means I get:
+
+- **Zero JS by default** — pages are pure HTML + CSS
+- **MDX support** — Markdown with components when I need them
+- **Content Collections** — type-safe frontmatter with Zod schemas
+- **Static output** — one `npm run build` and I have a `dist/` folder ready for Backblaze B2
+
+## The Stack
+
+```typescript
+// astro.config.mjs
+export default defineConfig({
+  site: "https://jacky-wong9273.com",
+  output: "static",
+  integrations: [mdx()],
+});
+```
+
+Simple. No databases, no serverless functions, no build pipelines that take 5 minutes.
+
+## Deployment
+
+The static output goes to **Backblaze B2** for storage and **Cloudflare** handles the CDN and SSL. Total monthly cost: practically $0.
+
+---
+
+_What's your preferred stack for personal sites? I'd love to hear about it._

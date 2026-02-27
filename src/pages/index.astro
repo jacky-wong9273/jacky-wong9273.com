@@ -1,0 +1,181 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import SocialLinks from '../components/SocialLinks.astro';
+import Timeline from '../components/Timeline.astro';
+import Qualifications from '../components/Qualifications.astro';
+import type { TimelineEntry } from '../components/Timeline.astro';
+import type { Qualification } from '../components/Qualifications.astro';
+
+const timelineEntries: TimelineEntry[] = [
+  {
+    date: '2024 — Present',
+    title: 'Your Current Role',
+    organization: 'Company / Organization Name',
+    description: 'Brief description of your current work, responsibilities, and impact.',
+    tags: ['TypeScript', 'Astro', 'Cloud'],
+  },
+  {
+    date: '2022 — 2024',
+    title: 'Previous Role',
+    organization: 'Previous Company',
+    description: 'Description of your role and key achievements during this period.',
+    tags: ['React', 'Node.js', 'AWS'],
+  },
+  {
+    date: '2020 — 2022',
+    title: 'Earlier Role',
+    organization: 'Earlier Company',
+    description: 'Description of your contributions and growth at this position.',
+    tags: ['Python', 'Data Analysis'],
+  },
+  {
+    date: '2018 — 2020',
+    title: 'Starting Role / Internship',
+    organization: 'First Company',
+    description: 'How you started your career. Key learnings and accomplishments.',
+    tags: ['JavaScript', 'HTML/CSS'],
+  },
+];
+
+const qualifications: Qualification[] = [
+  {
+    title: 'Master of Science in Computer Science',
+    institution: 'University Name',
+    year: '2020',
+    description: 'Specialization in your focus area.',
+  },
+  {
+    title: 'Bachelor of Science in Computer Science',
+    institution: 'University Name',
+    year: '2018',
+    description: 'Relevant coursework or honors.',
+  },
+  {
+    title: 'Professional Certification',
+    institution: 'Certification Body',
+    year: '2021',
+    description: 'Description of the certification and its relevance.',
+  },
+];
+---
+
+<MainLayout title="Home">
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="glow-dot glow-dot--blue hero-glow-1"></div>
+    <div class="glow-dot glow-dot--purple hero-glow-2"></div>
+    <div class="container">
+      <div class="hero-content">
+        <p class="hero-greeting">Hello, I'm</p>
+        <h1 class="hero-name">Jacky Wong</h1>
+        <p class="hero-tagline">
+          Developer <span class="dot">·</span> Educator <span class="dot">·</span> Builder
+        </p>
+        <p class="hero-description">
+          I build things for the web and teach IB Computer Science. Welcome to my corner of the internet.
+        </p>
+        <SocialLinks />
+      </div>
+    </div>
+  </section>
+
+  <div class="container"><hr class="gradient-divider" /></div>
+
+  <!-- Experience Timeline -->
+  <section class="section" id="experience">
+    <div class="container">
+      <h2 class="section-title">Experience</h2>
+      <Timeline entries={timelineEntries} />
+    </div>
+  </section>
+
+  <div class="container"><hr class="gradient-divider" /></div>
+
+  <!-- Qualifications -->
+  <section class="section" id="qualifications">
+    <div class="container">
+      <h2 class="section-title">Qualifications</h2>
+      <Qualifications qualifications={qualifications} />
+    </div>
+  </section>
+</MainLayout>
+
+<style>
+  .hero {
+    padding: var(--space-3xl) 0;
+    min-height: 50vh;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-glow-1 {
+    top: -100px;
+    right: -50px;
+    width: 400px;
+    height: 400px;
+    opacity: 0.15;
+  }
+
+  .hero-glow-2 {
+    bottom: -80px;
+    left: 30%;
+    width: 350px;
+    height: 350px;
+    opacity: 0.1;
+  }
+
+  .hero-content {
+    max-width: 640px;
+  }
+
+  .hero-greeting {
+    font-size: 1.1rem;
+    color: var(--color-accent);
+    font-weight: 500;
+    margin-bottom: var(--space-sm);
+  }
+
+  .hero-name {
+    font-size: 3.5rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: var(--space-md);
+    background: linear-gradient(135deg, var(--color-text-heading) 0%, var(--color-accent) 40%, var(--color-purple) 70%, var(--color-pink) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-tagline {
+    font-size: 1.25rem;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-md);
+    font-weight: 500;
+  }
+
+  .dot {
+    color: var(--color-accent);
+    font-weight: 700;
+  }
+
+  .hero-description {
+    font-size: 1.05rem;
+    color: var(--color-text);
+    margin-bottom: var(--space-xl);
+    max-width: 520px;
+  }
+
+  @media (max-width: 768px) {
+    .hero-name {
+      font-size: 2.5rem;
+    }
+
+    .hero {
+      min-height: auto;
+      padding: var(--space-2xl) 0;
+    }
+  }
+</style>

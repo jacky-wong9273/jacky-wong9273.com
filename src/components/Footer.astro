@@ -1,0 +1,66 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <p class="footer-text">
+      &copy; 2025-{year} Jacky Wong. Built with <a href="https://astro.build" target="_blank" rel="noopener">Astro</a> &amp; MDX.
+    </p>
+    <div class="footer-links">
+      <a href="mailto:your-email@example.com" aria-label="Email">Email</a>
+      <span class="divider">·</span>
+      <a href="https://github.com/your-username" target="_blank" rel="noopener" aria-label="GitHub">GitHub</a>
+      <span class="divider">·</span>
+      <a href="https://linkedin.com/in/your-profile" target="_blank" rel="noopener" aria-label="LinkedIn">LinkedIn</a>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    border-top: 1px solid var(--color-border);
+    padding: var(--space-xl) 0;
+    margin-top: var(--space-3xl);
+  }
+
+  .footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+  }
+
+  .footer-text {
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+    margin: 0;
+  }
+
+  .footer-links {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-size: 0.875rem;
+  }
+
+  .footer-links a {
+    color: var(--color-text-muted);
+  }
+
+  .footer-links a:hover {
+    color: var(--color-accent);
+  }
+
+  .divider {
+    color: var(--color-border);
+  }
+
+  @media (max-width: 768px) {
+    .footer-inner {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+</style>

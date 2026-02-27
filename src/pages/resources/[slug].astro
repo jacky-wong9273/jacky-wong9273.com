@@ -1,0 +1,181 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const resources = await getCollection('resources');
+  return resources.map(resource => ({
+    params: { slug: resource.id.replace(/\.mdx?$/, '') },
+    props: { resource },
+  }));
+}
+
+const { resource } = Astro.props;
+const { Content } = await render(resource);
+
+const categoryLabel = {
+  'ib-cs-sl': 'IB CS SL',
+  'ib-cs-hl': 'IB CS HL',
+  'general': 'General',
+}[resource.data.category];
+---
+
+<MainLayout title={resource.data.title} description={resource.data.description}>
+  <article class="section">
+    <div class="container article-container">
+      <a href="/resources" class="back-link">← Back to Resources</a>
+
+      <header class="article-header">
+        <div class="article-meta">
+          <span class="category-label">{categoryLabel}</span>
+          <time datetime={resource.data.date.toISOString()}>
+            {resource.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+          </time>
+        </div>
+        <h1 class="article-title">{resource.data.title}</h1>
+        <p class="article-description">{resource.data.description}</p>
+        <div class="article-tags">
+          {resource.data.tags.map(tag => <span class="tag">{tag}</span>)}
+        </div>
+      </header>
+
+      <div class="prose">
+        <Content />
+      </div>
+    </div>
+  </article>
+</MainLayout>
+
+<style>
+  .article-container {
+    max-width: 760px;
+  }
+
+  .back-link {
+    display: inline-block;
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+    margin-bottom: var(--space-xl);
+    transition: color var(--transition-fast);
+  }
+
+  .back-link:hover {
+    color: var(--color-accent);
+  }
+
+  .article-header {
+    margin-bottom: var(--space-2xl);
+    padding-bottom: var(--space-xl);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .article-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
+  }
+
+  .category-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    background: var(--color-tag-bg);
+    padding: 0.125rem 0.625rem;
+    border-radius: var(--radius-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .article-meta time {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+  }
+
+  .article-title {
+    font-size: 2.25rem;
+    margin-bottom: var(--space-md);
+  }
+
+  .article-description {
+    font-size: 1.1rem;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-md);
+  }
+
+  .article-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+  }
+
+  /* Prose styles for MDX content */
+  .prose :global(h2) {
+    font-size: 1.5rem;
+    margin-top: var(--space-2xl);
+    margin-bottom: var(--space-md);
+  }
+
+  .prose :global(h3) {
+    font-size: 1.25rem;
+    margin-top: var(--space-xl);
+    margin-bottom: var(--space-sm);
+  }
+
+  .prose :global(p) {
+    margin-bottom: var(--space-md);
+  }
+
+  .prose :global(ul),
+  .prose :global(ol) {
+    margin-bottom: var(--space-md);
+    padding-left: var(--space-xl);
+  }
+
+  .prose :global(li) {
+    margin-bottom: var(--space-xs);
+  }
+
+  .prose :global(blockquote) {
+    border-left: 3px solid var(--color-accent);
+    padding-left: var(--space-lg);
+    margin: var(--space-lg) 0;
+    color: var(--color-text-muted);
+    font-style: italic;
+  }
+
+  .prose :global(img) {
+    border-radius: var(--radius-md);
+    margin: var(--space-lg) 0;
+  }
+
+  .prose :global(a) {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .prose :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: var(--space-lg) 0;
+  }
+
+  .prose :global(th),
+  .prose :global(td) {
+    padding: var(--space-sm) var(--space-md);
+    border: 1px solid var(--color-border);
+    text-align: left;
+  }
+
+  .prose :global(th) {
+    background: var(--color-bg-secondary);
+    font-weight: 600;
+  }
+
+  .prose :global(hr) {
+    border: none;
+    border-top: 1px solid var(--color-border);
+    margin: var(--space-2xl) 0;
+  }
+</style>

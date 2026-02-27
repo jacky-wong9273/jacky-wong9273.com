@@ -1,0 +1,135 @@
+---
+export interface TimelineEntry {
+  date: string;
+  title: string;
+  organization: string;
+  description: string;
+  tags?: string[];
+}
+
+interface Props {
+  entries: TimelineEntry[];
+}
+
+const { entries } = Astro.props;
+---
+
+<div class="timeline">
+  {entries.map((entry, index) => (
+    <div class="timeline-item">
+      <div class="timeline-marker">
+        <div class="timeline-dot" />
+        {index < entries.length - 1 && <div class="timeline-line" />}
+      </div>
+      <div class="timeline-content">
+        <span class="timeline-date">{entry.date}</span>
+        <h3 class="timeline-title">{entry.title}</h3>
+        <p class="timeline-org">{entry.organization}</p>
+        <p class="timeline-desc">{entry.description}</p>
+        {entry.tags && entry.tags.length > 0 && (
+          <div class="timeline-tags">
+            {entry.tags.map(tag => <span class="tag">{tag}</span>)}
+          </div>
+        )}
+      </div>
+    </div>
+  ))}
+</div>
+
+<style>
+  .timeline {
+    position: relative;
+    padding-left: var(--space-xl);
+  }
+
+  .timeline-item {
+    display: flex;
+    gap: var(--space-lg);
+    position: relative;
+    padding-bottom: var(--space-2xl);
+  }
+
+  .timeline-item:last-child {
+    padding-bottom: 0;
+  }
+
+  .timeline-marker {
+    position: absolute;
+    left: calc(-1 * var(--space-xl));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .timeline-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    border: 2px solid var(--color-bg);
+    box-shadow: 0 0 0 3px var(--color-bg-secondary), 0 0 12px rgba(56, 189, 248, 0.3);
+    z-index: 1;
+    flex-shrink: 0;
+    transition: box-shadow var(--transition-normal);
+  }
+
+  .timeline-item:nth-child(2) .timeline-dot {
+    background: var(--color-purple);
+    box-shadow: 0 0 0 3px var(--color-bg-secondary), 0 0 12px rgba(167, 139, 250, 0.3);
+  }
+
+  .timeline-item:nth-child(3) .timeline-dot {
+    background: var(--color-emerald);
+    box-shadow: 0 0 0 3px var(--color-bg-secondary), 0 0 12px rgba(52, 211, 153, 0.3);
+  }
+
+  .timeline-item:nth-child(4) .timeline-dot {
+    background: var(--color-pink);
+    box-shadow: 0 0 0 3px var(--color-bg-secondary), 0 0 12px rgba(244, 114, 182, 0.3);
+  }
+
+  .timeline-line {
+    width: 2px;
+    flex: 1;
+    background: linear-gradient(to bottom, var(--color-border), rgba(56, 189, 248, 0.15));
+    margin-top: var(--space-xs);
+  }
+
+  .timeline-content {
+    flex: 1;
+    padding-top: 0;
+  }
+
+  .timeline-date {
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    margin-bottom: var(--space-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .timeline-title {
+    font-size: 1.125rem;
+    margin-bottom: 0.125rem;
+  }
+
+  .timeline-org {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    margin-bottom: var(--space-sm);
+  }
+
+  .timeline-desc {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: var(--space-sm);
+  }
+
+  .timeline-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+  }
+</style>
