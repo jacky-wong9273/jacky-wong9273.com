@@ -39,4 +39,4 @@ jobs:
         run: b2 account authorize "${{ secrets.B2_KEY_ID }}" "${{ secrets.B2_APP_KEY }}"
 
       - name: Sync to B2 bucket
-        run: b2 sync --delete --write-mode replace-newer dist/ "b2://${{ secrets.B2_BUCKET_NAME }}/"
+        run: b2 sync --delete dist/ "b2://${{ secrets.B2_BUCKET_NAME }}/"
