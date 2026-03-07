@@ -100,4 +100,10 @@ const { qualifications } = Astro.props;
     color: var(--color-text-muted);
     margin: 0;
   }
+
+  @media (max-width: 768px) {
+    .qualifications-grid {
+      grid-template-columns: 1fr;
+    }
+  }
 </style>

@@ -2,6 +2,7 @@
 import EmailIcon from './icons/EmailIcon.astro';
 import GitHubIcon from './icons/GitHubIcon.astro';
 import LinkedInIcon from './icons/LinkedInIcon.astro';
+import { social } from '../content/profile';
 
 interface SocialLink {
   label: string;
@@ -14,9 +15,9 @@ interface Props {
 }
 
 const { links = [
-  { label: 'Email', href: 'mailto:your-email@example.com', icon: 'email' as const },
-  { label: 'GitHub', href: 'https://github.com/your-username', icon: 'github' as const },
-  { label: 'LinkedIn', href: 'https://linkedin.com/in/your-profile', icon: 'linkedin' as const },
+  { label: 'Email', href: social.email, icon: 'email' as const },
+  { label: 'GitHub', href: social.github, icon: 'github' as const },
+  { label: 'LinkedIn', href: social.linkedin, icon: 'linkedin' as const },
 ] } = Astro.props;
 ---
 

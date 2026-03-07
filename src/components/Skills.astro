@@ -1,0 +1,73 @@
+---
+import type { SkillCategory } from '../content/profile';
+
+interface Props {
+  categories: SkillCategory[];
+}
+
+const { categories } = Astro.props;
+
+const colorMap: Record<SkillCategory['color'], { border: string; bg: string; text: string }> = {
+  blue:    { border: 'var(--color-accent)',  bg: 'var(--color-tag-bg)',     text: 'var(--color-tag-text)' },
+  purple:  { border: 'var(--color-purple)',  bg: 'var(--color-purple-bg)',  text: 'var(--color-purple)' },
+  emerald: { border: 'var(--color-emerald)', bg: 'var(--color-emerald-bg)', text: 'var(--color-emerald)' },
+  pink:    { border: 'var(--color-pink)',    bg: 'var(--color-pink-bg)',    text: 'var(--color-pink)' },
+  amber:   { border: 'var(--color-amber)',   bg: 'var(--color-amber-bg)',   text: 'var(--color-amber)' },
+};
+---
+
+<div class="skills-grid">
+  {categories.map(cat => {
+    const c = colorMap[cat.color];
+    return (
+      <div class="skill-category card" style={`border-left: 3px solid ${c.border};`}>
+        <h3 class="skill-label" style={`color: ${c.border};`}>{cat.label}</h3>
+        <div class="skill-items">
+          {cat.items.map(item => (
+            <span class="skill-tag" style={`background: ${c.bg}; color: ${c.text};`}>{item}</span>
+          ))}
+        </div>
+      </div>
+    );
+  })}
+</div>
+
+<style>
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: var(--space-lg);
+  }
+
+  .skill-category {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .skill-label {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .skill-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+  }
+
+  .skill-tag {
+    display: inline-block;
+    padding: 0.2rem 0.7rem;
+    border-radius: 9999px;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  @media (max-width: 768px) {
+    .skills-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

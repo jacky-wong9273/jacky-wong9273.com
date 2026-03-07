@@ -1,6 +1,8 @@
 ---
 import MainLayout from '../../layouts/MainLayout.astro';
+import GitHubIcon from '../../components/icons/GitHubIcon.astro';
 import { getCollection } from 'astro:content';
+import { social } from '../../content/profile';
 
 const projects = (await getCollection('projects', ({ data }) => !data.draft))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
@@ -9,10 +11,19 @@ const projects = (await getCollection('projects', ({ data }) => !data.draft))
 <MainLayout title="Projects" description="A showcase of projects by Jacky Wong.">
   <section class="section">
     <div class="container">
-      <h1 class="page-title">Projects</h1>
-      <p class="page-description">
-        A collection of things I've built. Each project has its own write-up — click through to read more.
-      </p>
+
+      <div class="github-profile card">
+        <div class="github-profile-inner">
+          <span class="github-icon"><GitHubIcon size={28} /></span>
+          <div>
+            <p class="github-heading">Find more on GitHub</p>
+            <p class="github-sub">Browse all my repositories and open-source contributions.</p>
+          </div>
+          <a href={social.github} target="_blank" rel="noopener" class="github-link">View Profile &rarr;</a>
+        </div>
+      </div>
+
+      <h2 class="section-title" style="margin-top: var(--space-2xl);">Selected Projects</h2>
 
       {projects.length === 0 && (
         <div class="empty-state">
@@ -54,11 +65,42 @@ const projects = (await getCollection('projects', ({ data }) => !data.draft))
     margin-bottom: var(--space-md);
   }
 
-  .page-description {
+  .github-profile {
+    margin-bottom: var(--space-xl);
+    border-left: 3px solid var(--color-accent);
+  }
+
+  .github-profile-inner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+    flex-wrap: wrap;
+  }
+
+  .github-icon {
+    color: var(--color-accent);
+    display: flex;
+    align-items: center;
+  }
+
+  .github-heading {
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: var(--color-text-heading);
+    margin: 0;
+  }
+
+  .github-sub {
     color: var(--color-text-muted);
-    font-size: 1.1rem;
-    max-width: 600px;
-    margin-bottom: var(--space-2xl);
+    font-size: 0.875rem;
+    margin: 0;
+  }
+
+  .github-link {
+    margin-left: auto;
+    font-weight: 600;
+    font-size: 0.9rem;
+    white-space: nowrap;
   }
 
   .empty-state {
@@ -159,6 +201,15 @@ const projects = (await getCollection('projects', ({ data }) => !data.draft))
   @media (max-width: 768px) {
     .projects-grid {
       grid-template-columns: 1fr;
+    }
+
+    .github-profile-inner {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .github-link {
+      margin-left: 0;
     }
   }
 </style>

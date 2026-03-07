@@ -1,10 +1,18 @@
 ---
+export interface TimelineHighlight {
+  date: string;
+  title: string;
+  details?: string[];
+}
+
 export interface TimelineEntry {
   date: string;
   title: string;
   organization: string;
-  description: string;
+  description?: string;
+  details?: string[];
   tags?: string[];
+  highlights?: TimelineHighlight[];
 }
 
 interface Props {
@@ -25,7 +33,29 @@ const { entries } = Astro.props;
         <span class="timeline-date">{entry.date}</span>
         <h3 class="timeline-title">{entry.title}</h3>
         <p class="timeline-org">{entry.organization}</p>
-        <p class="timeline-desc">{entry.description}</p>
+        {entry.description && <p class="timeline-desc">{entry.description}</p>}
+        {entry.details && entry.details.length > 0 && (
+          <ul class="timeline-details">
+            {entry.details.map(d => <li>{d}</li>)}
+          </ul>
+        )}
+        {entry.highlights && entry.highlights.length > 0 && (
+          <div class="timeline-highlights">
+            {entry.highlights.map(h => (
+              <div class="highlight">
+                <div class="highlight-header">
+                  <span class="highlight-date">{h.date}</span>
+                  <span class="highlight-title">{h.title}</span>
+                </div>
+                {h.details && h.details.length > 0 && (
+                  <ul class="highlight-details">
+                    {h.details.map(d => <li>{d}</li>)}
+                  </ul>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
         {entry.tags && entry.tags.length > 0 && (
           <div class="timeline-tags">
             {entry.tags.map(tag => <span class="tag">{tag}</span>)}
@@ -127,9 +157,89 @@ const { entries } = Astro.props;
     margin-bottom: var(--space-sm);
   }
 
+  .timeline-details {
+    list-style: none;
+    padding-left: var(--space-md);
+    margin-bottom: var(--space-sm);
+  }
+
+  .timeline-details li {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--space-xs);
+    position: relative;
+    padding-left: var(--space-md);
+  }
+
+  .timeline-details li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--color-accent);
+    font-weight: 700;
+  }
+
   .timeline-tags {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-xs);
+  }
+
+  /* ── Highlights (sub-items) ─────────────────────── */
+  .timeline-highlights {
+    margin-top: var(--space-sm);
+    margin-bottom: var(--space-md);
+    padding-left: var(--space-md);
+    border-left: 2px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .highlight {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .highlight-header {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .highlight-date {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    letter-spacing: 0.03em;
+  }
+
+  .highlight-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text-heading);
+  }
+
+  .highlight-details {
+    margin-top: var(--space-xs);
+    padding-left: var(--space-md);
+    list-style: none;
+  }
+
+  .highlight-details li {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    line-height: 1.5;
+    margin-bottom: 0.125rem;
+    position: relative;
+    padding-left: var(--space-sm);
+  }
+
+  .highlight-details li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--color-accent);
+    font-weight: 700;
   }
 </style>
