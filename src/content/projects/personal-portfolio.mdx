@@ -1,38 +1,81 @@
 ---
 title: "Personal Portfolio Website"
-description: "A static portfolio site built with Astro and MDX, deployed on Backblaze B2 + Cloudflare."
+description: "A static portfolio and blog built with Astro and MDX, deployed on Cloudflare Pages with CI/CD."
 date: 2026-02-27
-tags: ["Astro", "MDX", "TypeScript", "Cloudflare"]
+tags: ["Astro", "MDX", "TypeScript", "Cloudflare Pages"]
 featured: true
 link: "https://jacky-wong9273.com"
-repo: "https://github.com/your-username/jacky-wong9273.com"
+repo: "https://github.com/jacky-wong9273/jacky-wong9273.com"
 ---
 
 ## Overview
 
-This is my personal portfolio website — the very site you're looking at right now! It's built with [Astro](https://astro.build) and uses MDX for content authoring, making it easy to update without touching any framework code.
+This is my personal portfolio website — the very site you're looking at right now. It serves as a hub for my professional profile, project showcases, and technical blog posts. Built with [Astro](https://astro.build) and authored in MDX, it prioritises speed, simplicity, and ease of content updates.
+
+## Motivation
+
+I wanted a personal site that:
+
+- Loads instantly with **zero client-side JavaScript** by default
+- Lets me write content in **Markdown/MDX** — no JSX wrangling for blog posts
+- Costs **$0/month** to host
+- Deploys automatically on every `git push`
 
 ## Tech Stack
 
-- **Framework:** Astro with static output
-- **Content:** MDX for rich, component-enhanced Markdown
-- **Language:** TypeScript (strict mode)
-- **Hosting:** Backblaze B2 object storage + Cloudflare CDN
-- **Styling:** Vanilla CSS with custom properties
+| Layer        | Choice                             |
+| :----------- | :--------------------------------- |
+| Framework    | Astro (static output)              |
+| Content      | MDX via Astro Content Collections  |
+| Language     | TypeScript (strict mode)           |
+| Styling      | Vanilla CSS with custom properties |
+| Deployment   | Cloudflare Pages                   |
+| CI/CD        | Cloudflare Pages (auto-build)      |
 
-## Key Features
+## Architecture Decisions
 
-1. **Static output** — zero JavaScript by default, instant page loads
-2. **MDX content** — update content in any Markdown editor
-3. **Responsive design** — works seamlessly on all devices
-4. **Dark theme** — easy on the eyes
+### Why Astro over Next.js or Gatsby?
 
-## What I Learned
+For a content-heavy site with no interactive UI, shipping a JavaScript runtime is unnecessary. Astro's static output produces pure HTML + CSS pages that score 100 on Lighthouse performance out of the box.
 
-Building this site reinforced the value of simplicity. By going fully static with Astro, the site loads instantly and costs virtually nothing to host.
+### Content Collections for type safety
 
-> The best website is the one that's actually published.
+All blog posts and project write-ups are typed with Zod schemas through Astro Content Collections. Frontmatter errors are caught at build time, not after deployment.
+
+```typescript
+const blogs = defineCollection({
+  type: "content",
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    date: z.coerce.date(),
+    tags: z.array(z.string()).default([]),
+    draft: z.boolean().default(false),
+  }),
+});
+```
+
+### Centralised profile data
+
+Education history, work experience, certifications, and social links are defined in a single `profile.ts` file. Every page that displays profile information reads from this source, eliminating duplication and keeping updates to one place.
+
+## Deployment Pipeline
+
+The site is connected to Cloudflare Pages, which watches the `main` branch. On every push:
+
+1. Cloudflare pulls the latest code
+2. Runs `pnpm build` to generate static files in `dist/`
+3. Deploys to Cloudflare's global CDN
+4. SSL and custom domain are handled automatically
+
+Total hosting cost: **$0/month**.
+
+## Lessons Learned
+
+- **Start simple.** I initially explored Backblaze B2 + Cloudflare CDN as a hosting setup. The S3-compatible endpoint required Host header overrides (an Enterprise-only Cloudflare feature), and the native `/file/` endpoint needed a Cloudflare Worker for path rewriting. Cloudflare Pages eliminated all of this complexity in minutes.
+- **Static-first pays off.** Zero-JS pages mean no hydration bugs, no loading states, and near-perfect Lighthouse scores without any optimisation work.
+- **Content Collections are worth the setup.** Catching a missing frontmatter field at build time is far better than discovering a broken page in production.
 
 ---
 
-*More details to be added as the project evolves.*
+*Source code is available on [GitHub](https://github.com/jacky-wong9273/jacky-wong9273.com).*

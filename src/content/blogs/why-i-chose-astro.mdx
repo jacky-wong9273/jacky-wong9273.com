@@ -27,7 +27,7 @@ Astro's "islands architecture" means I get:
 - **Zero JS by default** — pages are pure HTML + CSS
 - **MDX support** — Markdown with components when I need them
 - **Content Collections** — type-safe frontmatter with Zod schemas
-- **Static output** — one `npm run build` and I have a `dist/` folder ready for Backblaze B2
+- **Static output** — one `pnpm build` and I have a `dist/` folder ready for Cloudflare Pages
 
 ## The Stack
 
@@ -44,7 +44,7 @@ Simple. No databases, no serverless functions, no build pipelines that take 5 mi
 
 ## Deployment
 
-The static output goes to **Backblaze B2** for storage and **Cloudflare** handles the CDN and SSL. Total monthly cost: practically $0.
+The static output is deployed to **Cloudflare Pages**, which handles the CDN, SSL, and CI/CD automatically. Every push to `main` triggers a build. Total monthly cost: $0.
 
 ---
 

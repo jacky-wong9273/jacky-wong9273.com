@@ -1,43 +1,58 @@
-# Astro Starter Kit: Minimal
+# jacky-wong9273.com
+
+My personal portfolio and blog — built with [Astro](https://astro.build), authored in MDX, and deployed on [Cloudflare Pages](https://pages.cloudflare.com).
+
+**Live:** [https://jacky-wong9273.com](https://jacky-wong9273.com)
+
+## Tech Stack
+
+- **Framework:** Astro (static output)
+- **Content:** MDX via Astro Content Collections
+- **Language:** TypeScript
+- **Styling:** Vanilla CSS with custom properties
+- **Deployment:** Cloudflare Pages (auto-deploys on push to `main`)
+
+## Project Structure
+
+```
+src/
+├── components/       # Reusable Astro components
+│   └── icons/        # SVG icon components
+├── content/
+│   ├── profile.ts    # Centralised profile data (education, experience, certs)
+│   ├── blogs/        # Blog posts (.mdx)
+│   └── projects/     # Project write-ups (.mdx)
+├── layouts/          # Page layouts and <head> config
+├── pages/            # File-based routing
+│   ├── blogs/        # /blogs and /blogs/[slug]
+│   └── projects/     # /projects and /projects/[slug]
+└── styles/           # Global CSS
+```
+
+## Getting Started
 
 ```sh
-npm create astro@latest -- --template minimal
+pnpm install
+pnpm dev          # http://localhost:4321
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Commands
 
-## 🚀 Project Structure
+| Command        | Action                                 |
+| :------------- | :------------------------------------- |
+| `pnpm dev`     | Start dev server at `localhost:4321`   |
+| `pnpm build`   | Build production site to `./dist/`     |
+| `pnpm preview` | Preview production build locally       |
 
-Inside of your Astro project, you'll see the following folders and files:
+## Deployment
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+Cloudflare Pages is connected to this repository. Every push to `main` triggers an automatic build and deploy.
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+Build configuration:
+- **Build command:** `pnpm build`
+- **Output directory:** `dist`
+- **Node.js version:** 22
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+## License
 
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Content and code in this repository are personal work. All rights reserved.
