@@ -113,4 +113,18 @@ const { title, description } = Astro.props;
   } else {
     document.querySelectorAll('.reveal').forEach((el) => el.classList.add('is-visible'));
   }
+
+  if (!reduceMotion) {
+    document.querySelectorAll<HTMLElement>('.card').forEach((card) => {
+      card.addEventListener('pointermove', (event) => {
+        const rect = card.getBoundingClientRect();
+        const px = (event.clientX - rect.left) / rect.width - 0.5;
+        const py = (event.clientY - rect.top) / rect.height - 0.5;
+        card.style.transform = `perspective(900px) rotateY(${px * 10}deg) rotateX(${-py * 8}deg) translateY(-5px) scale(1.01)`;
+      });
+      card.addEventListener('pointerleave', () => {
+        card.style.transform = '';
+      });
+    });
+  }
 </script>

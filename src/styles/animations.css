@@ -193,6 +193,12 @@
   }
 }
 
+@keyframes cat-orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @keyframes cat-bob {
   0%,
   100% {
@@ -254,13 +260,13 @@
 
 .cat-spark {
   position: absolute;
-  width: 5px;
-  height: 5px;
-  margin: -2.5px 0 0 -2.5px;
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
   border-radius: 50%;
   background: #7dd3fc;
-  box-shadow: 0 0 8px #38bdf8;
-  animation: spark-pop 0.7s ease-out forwards;
+  box-shadow: 0 0 12px #38bdf8, 0 0 22px rgba(56, 189, 248, 0.7);
+  animation: spark-pop 0.9s ease-out forwards;
   pointer-events: none;
 }
 
