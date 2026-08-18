@@ -3,7 +3,6 @@ import MainLayout from '../layouts/MainLayout.astro';
 import SocialLinks from '../components/SocialLinks.astro';
 import Timeline from '../components/Timeline.astro';
 import Qualifications from '../components/Qualifications.astro';
-import Skills from '../components/Skills.astro';
 import { education, experience, certifications } from '../content/profile';
 ---
 
@@ -12,25 +11,44 @@ import { education, experience, certifications } from '../content/profile';
   <section class="hero">
     <div class="glow-dot glow-dot--blue hero-glow-1"></div>
     <div class="glow-dot glow-dot--purple hero-glow-2"></div>
+    <div class="hero-glyphs" aria-hidden="true">
+      <span class="hero-glyph hero-glyph--1">{'{ }'}</span>
+      <span class="hero-glyph hero-glyph--2">&lt;/&gt;</span>
+      <span class="hero-glyph hero-glyph--3">01</span>
+      <span class="hero-glyph hero-glyph--4">λ</span>
+      <span class="hero-glyph hero-glyph--5">::</span>
+    </div>
     <div class="container">
       <div class="hero-content">
+        <p class="hero-terminal">
+          <span class="term-user">jacky@portfolio</span>
+          <span class="term-sep">:</span>
+          <span class="term-path">~</span>
+          <span class="term-prompt">$</span>
+          <span class="term-cmd">whoami</span>
+          <span class="term-caret"></span>
+        </p>
         <p class="hero-greeting">Hello, I'm</p>
-        <h1 class="hero-name">Jacky Wong</h1>
+        <div class="hero-name-wrap">
+          <h1 class="hero-name">Jacky Wong</h1>
+          <span class="hero-name-ghost hero-name-ghost--cyan" aria-hidden="true">Jacky Wong</span>
+          <span class="hero-name-ghost hero-name-ghost--pink" aria-hidden="true">Jacky Wong</span>
+        </div>
 
         <p class="hero-description">
           I build things for real impacts. Welcome to my professional portfolio.
         </p>
         <SocialLinks />
         <nav class="quick-links">
-          <a href="#experience" class="quick-link quick-link--purple">
+          <a href="#experience" class="quick-link quick-link--purple shine">
             <span class="quick-link-label">Experience</span>
             <span class="quick-link-arrow">&darr;</span>
           </a>
-          <a href="#education" class="quick-link quick-link--blue">
+          <a href="#education" class="quick-link quick-link--blue shine">
             <span class="quick-link-label">Education</span>
             <span class="quick-link-arrow">&darr;</span>
           </a>
-          <a href="#qualifications" class="quick-link quick-link--emerald">
+          <a href="#qualifications" class="quick-link quick-link--emerald shine">
             <span class="quick-link-label">Certifications</span>
             <span class="quick-link-arrow">&darr;</span>
           </a>
@@ -42,7 +60,7 @@ import { education, experience, certifications } from '../content/profile';
   <div class="container"><hr class="gradient-divider" /></div>
 
   <!-- Experience -->
-  <section class="section" id="experience">
+  <section class="section reveal" id="experience">
     <div class="container">
       <h2 class="section-title">Professional Experiences</h2>
       <Timeline entries={experience} />
@@ -52,7 +70,7 @@ import { education, experience, certifications } from '../content/profile';
   <div class="container"><hr class="gradient-divider" /></div>
 
   <!-- Education -->
-  <section class="section" id="education">
+  <section class="section reveal" id="education">
     <div class="container">
       <h2 class="section-title">Education</h2>
       <Timeline entries={education} />
@@ -62,7 +80,7 @@ import { education, experience, certifications } from '../content/profile';
   <div class="container"><hr class="gradient-divider" /></div>
 
   <!-- Qualifications / Certifications -->
-  <section class="section" id="qualifications">
+  <section class="section reveal" id="qualifications">
     <div class="container">
       <h2 class="section-title">Certifications</h2>
       <Qualifications qualifications={certifications} />
@@ -102,7 +120,60 @@ import { education, experience, certifications } from '../content/profile';
   }
 
   .hero-content {
-    max-width: 640px;
+    max-width: 680px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-glyphs {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .hero-glyph {
+    position: absolute;
+    font-family: var(--font-mono);
+    color: var(--color-accent);
+    opacity: 0.28;
+    text-shadow: 0 0 12px rgba(56, 189, 248, 0.45);
+    animation: float-orbit 9s ease-in-out infinite;
+  }
+
+  .hero-glyph--1 { top: 12%; right: 8%; font-size: 1.6rem; }
+  .hero-glyph--2 { top: 38%; right: 16%; font-size: 1.25rem; animation-duration: 11s; color: var(--color-purple); }
+  .hero-glyph--3 { bottom: 22%; right: 10%; font-size: 1.1rem; animation-duration: 8s; color: var(--color-pink); }
+  .hero-glyph--4 { top: 18%; right: 28%; font-size: 1.4rem; animation-duration: 12s; }
+  .hero-glyph--5 { bottom: 30%; right: 26%; font-size: 1.3rem; animation-duration: 10s; color: var(--color-emerald); }
+
+  .hero-terminal {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    color: var(--color-text-muted);
+    background: rgba(8, 14, 26, 0.72);
+    border: 1px solid rgba(56, 189, 248, 0.22);
+    border-radius: 999px;
+    padding: 0.35rem 0.85rem;
+    margin-bottom: var(--space-lg);
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.08);
+    backdrop-filter: blur(10px);
+  }
+
+  .term-user { color: var(--color-emerald); }
+  .term-sep { color: var(--color-text-muted); }
+  .term-path { color: var(--color-purple); }
+  .term-prompt { color: var(--color-accent); }
+  .term-cmd { color: var(--color-text-heading); }
+
+  .term-caret {
+    width: 7px;
+    height: 1rem;
+    background: var(--color-accent);
+    box-shadow: 0 0 10px var(--color-accent);
+    animation: blink-caret 1s step-end infinite;
   }
 
   .hero-greeting {
@@ -110,18 +181,60 @@ import { education, experience, certifications } from '../content/profile';
     color: var(--color-accent);
     font-weight: 500;
     margin-bottom: var(--space-sm);
+    letter-spacing: 0.04em;
+    text-shadow: 0 0 18px rgba(56, 189, 248, 0.35);
+  }
+
+  .hero-name-wrap {
+    position: relative;
+    display: inline-block;
+    margin-bottom: var(--space-md);
   }
 
   .hero-name {
-    font-size: 3.5rem;
-    font-weight: 800;
-    letter-spacing: -0.03em;
+    position: relative;
+    z-index: 1;
+    font-size: 3.6rem;
+    font-weight: 700;
+    letter-spacing: -0.04em;
     line-height: 1.1;
-    margin-bottom: var(--space-md);
-    background: linear-gradient(135deg, var(--color-text-heading) 0%, var(--color-accent) 40%, var(--color-purple) 70%, var(--color-pink) 100%);
+    margin: 0;
+    background: linear-gradient(
+      120deg,
+      #f8fafc 0%,
+      #38bdf8 28%,
+      #a78bfa 55%,
+      #f472b6 78%,
+      #f8fafc 100%
+    );
+    background-size: 220% auto;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    animation: shimmer-shift 7s linear infinite;
+  }
+
+  .hero-name-ghost {
+    position: absolute;
+    inset: 0;
+    font-family: var(--font-display);
+    font-size: 3.6rem;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+    pointer-events: none;
+    animation: glitch-slice 4.2s linear infinite;
+  }
+
+  .hero-name-ghost--cyan {
+    color: #22d3ee;
+    mix-blend-mode: screen;
+  }
+
+  .hero-name-ghost--pink {
+    color: #f472b6;
+    mix-blend-mode: screen;
+    animation-delay: 0.15s;
   }
 
   .hero-tagline {
@@ -217,8 +330,13 @@ import { education, experience, certifications } from '../content/profile';
       padding: var(--space-2xl) 0;
     }
 
-    .hero-name {
+    .hero-name,
+    .hero-name-ghost {
       font-size: 2.5rem;
+    }
+
+    .hero-glyphs {
+      display: none;
     }
 
     .quick-links {
@@ -229,6 +347,19 @@ import { education, experience, certifications } from '../content/profile';
     .quick-link {
       padding: var(--space-sm) var(--space-lg);
       font-size: 0.9rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-name,
+    .hero-glyph,
+    .hero-name-ghost,
+    .term-caret {
+      animation: none;
+    }
+
+    .hero-name-ghost {
+      display: none;
     }
   }
 </style>
