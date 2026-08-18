@@ -1,4 +1,6 @@
 ---
+import { CAT_BEHAVIORS } from '../lib/cat-behaviors';
+
 const currentPath = Astro.url.pathname;
 
 const navLinks = [
@@ -29,6 +31,42 @@ const navLinks = [
           </a>
         </li>
       ))}
+      <li class="nav-item nav-item--cat">
+        <button
+          class="nav-link nav-cat-toggle"
+          id="cat-menu-toggle"
+          type="button"
+          aria-expanded="false"
+          aria-haspopup="true"
+          aria-controls="cat-behavior-menu"
+          title="Wichien Maat behaviours"
+        >
+          <span class="nav-cat-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none">
+              <path d="M12 13c3.2 0 6 1.7 6 4.2V19H6v-1.8C6 14.7 8.8 13 12 13Z" fill="currentColor" />
+              <circle cx="12" cy="8.2" r="3.1" fill="currentColor" />
+              <path d="M5.2 7.2 7.6 9.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+              <path d="M18.8 7.2 16.4 9.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+            </svg>
+          </span>
+          <span>Cat</span>
+          <span class="nav-cat-status" id="cat-menu-status">Auto</span>
+        </button>
+        <div class="cat-menu" id="cat-behavior-menu" hidden>
+          <p class="cat-menu-title">Wichien Maat</p>
+          {CAT_BEHAVIORS.map((item) => (
+            <button
+              type="button"
+              class="cat-menu-option"
+              data-cat-behavior={item.id}
+              aria-pressed={item.id === 'auto' ? 'true' : 'false'}
+            >
+              <span class="cat-menu-option-label">{item.label}</span>
+              <span class="cat-menu-option-hint">{item.hint}</span>
+            </button>
+          ))}
+        </div>
+      </li>
     </ul>
   </div>
 </nav>
@@ -113,6 +151,97 @@ const navLinks = [
     animation: shimmer-shift 3s linear infinite;
   }
 
+  .nav-item--cat {
+    position: relative;
+  }
+
+  .nav-cat-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: none;
+    border: 0;
+    font: inherit;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .nav-cat-icon {
+    display: inline-flex;
+    color: var(--color-accent);
+  }
+
+  .nav-cat-status {
+    color: var(--color-text-muted);
+    font-size: 0.72rem;
+    font-weight: 500;
+    padding: 0.1rem 0.4rem;
+    border-radius: 999px;
+    border: 1px solid var(--color-border);
+    background: rgba(12, 18, 34, 0.7);
+  }
+
+  .cat-menu {
+    position: absolute;
+    top: calc(100% + 0.85rem);
+    right: 0;
+    z-index: 120;
+    width: min(260px, calc(100vw - 2rem));
+    padding: 0.65rem;
+    border-radius: var(--radius-lg);
+    background: rgba(5, 8, 20, 0.94);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-lg), var(--shadow-glow);
+    backdrop-filter: blur(18px);
+  }
+
+  .cat-menu-title {
+    margin: 0 0 0.45rem;
+    padding: 0 0.35rem 0.4rem;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text-heading);
+    font-family: var(--font-display);
+    font-size: 0.82rem;
+    letter-spacing: 0.02em;
+  }
+
+  .cat-menu-option {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.1rem;
+    width: 100%;
+    margin: 0;
+    padding: 0.45rem 0.5rem;
+    border: 0;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--color-text);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .cat-menu-option:hover,
+  .cat-menu-option[aria-pressed='true'] {
+    background: rgba(56, 189, 248, 0.12);
+  }
+
+  .cat-menu-option[aria-pressed='true'] .cat-menu-option-label {
+    color: var(--color-accent);
+  }
+
+  .cat-menu-option-label {
+    font-size: 0.88rem;
+    font-weight: 600;
+  }
+
+  .cat-menu-option-hint {
+    color: var(--color-text-muted);
+    font-size: 0.72rem;
+    line-height: 1.35;
+  }
+
   .nav-toggle {
     display: none;
     background: none;
@@ -167,10 +296,29 @@ const navLinks = [
     .nav-links.open {
       display: flex;
     }
+
+    .nav-item--cat {
+      width: 100%;
+    }
+
+    .cat-menu {
+      position: static;
+      width: 100%;
+      margin-top: 0.5rem;
+      right: auto;
+    }
   }
 </style>
 
 <script>
+  import {
+    CAT_BEHAVIOR_EVENT,
+    CAT_STORAGE_KEY,
+    behaviorLabel,
+    isCatBehaviorId,
+    type CatBehaviorId,
+  } from '../lib/cat-behaviors';
+
   const toggle = document.querySelector('.nav-toggle');
   const links = document.querySelector('.nav-links');
   toggle?.addEventListener('click', () => {
@@ -178,4 +326,70 @@ const navLinks = [
     const isOpen = links?.classList.contains('open');
     toggle.setAttribute('aria-expanded', String(isOpen));
   });
+
+  const menuToggle = document.getElementById('cat-menu-toggle');
+  const menu = document.getElementById('cat-behavior-menu');
+  const status = document.getElementById('cat-menu-status');
+  const options = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-cat-behavior]'));
+
+  const readMode = (): CatBehaviorId => {
+    try {
+      const stored = localStorage.getItem(CAT_STORAGE_KEY);
+      if (isCatBehaviorId(stored)) return stored;
+    } catch {
+      /* ignore */
+    }
+    return 'auto';
+  };
+
+  const setOpen = (open: boolean) => {
+    if (!menu || !menuToggle) return;
+    menu.hidden = !open;
+    menuToggle.setAttribute('aria-expanded', String(open));
+  };
+
+  const paint = (mode: CatBehaviorId, live?: string) => {
+    options.forEach((option) => {
+      option.setAttribute('aria-pressed', String(option.dataset.catBehavior === mode));
+    });
+    if (!status) return;
+    if (mode === 'auto' && live && isCatBehaviorId(live) && live !== 'auto') {
+      status.textContent = `Auto · ${behaviorLabel(live)}`;
+    } else {
+      status.textContent = behaviorLabel(mode);
+    }
+  };
+
+  paint(readMode());
+
+  menuToggle?.addEventListener('click', (event) => {
+    event.stopPropagation();
+    setOpen(Boolean(menu?.hidden));
+  });
+
+  options.forEach((option) => {
+    option.addEventListener('click', () => {
+      const next = option.dataset.catBehavior;
+      if (!isCatBehaviorId(next)) return;
+      window.dispatchEvent(new CustomEvent(CAT_BEHAVIOR_EVENT, { detail: { behavior: next } }));
+      paint(next);
+      if (window.matchMedia('(min-width: 769px)').matches) setOpen(false);
+    });
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!menu || menu.hidden) return;
+    const target = event.target as Node | null;
+    if (menu.contains(target) || menuToggle?.contains(target)) return;
+    setOpen(false);
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') setOpen(false);
+  });
+
+  window.addEventListener('wichien:live', ((event: CustomEvent<{ behavior?: string; mode?: string }>) => {
+    const mode = isCatBehaviorId(event.detail?.mode) ? event.detail.mode : readMode();
+    paint(mode, event.detail?.behavior);
+  }) as EventListener);
 </script>
