@@ -13,19 +13,31 @@
 
     <svg class="cursor-cat-svg" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <linearGradient id="maat-cream" x1="40" y1="40" x2="128" y2="148" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#fffaf0" />
-          <stop offset="0.55" stop-color="#ffe7b3" />
-          <stop offset="1" stop-color="#f3cf86" />
+        <linearGradient id="maat-ivory" x1="40" y1="78" x2="120" y2="154" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#fffdf8" />
+          <stop offset="0.5" stop-color="#f6ead2" />
+          <stop offset="1" stop-color="#e8d3b0" />
         </linearGradient>
-        <linearGradient id="maat-seal" x1="48" y1="12" x2="112" y2="92" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#6b4226" />
-          <stop offset="0.5" stop-color="#3f2414" />
-          <stop offset="1" stop-color="#2a160c" />
+        <linearGradient id="maat-seal" x1="110" y1="16" x2="146" y2="118" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#4a2c18" />
+          <stop offset="0.55" stop-color="#26150c" />
+          <stop offset="1" stop-color="#120806" />
         </linearGradient>
-        <linearGradient id="maat-mask" x1="80" y1="22" x2="80" y2="78" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#4a2b18" />
-          <stop offset="1" stop-color="#2d190e" />
+        <linearGradient id="maat-mask" x1="80" y1="16" x2="80" y2="94" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#4a2e1c" />
+          <stop offset="0.62" stop-color="#2a180e" />
+          <stop offset="0.88" stop-color="#3d2a18" />
+          <stop offset="1" stop-color="#3d2a18" stop-opacity="0" />
+        </linearGradient>
+        <linearGradient id="maat-sock" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#f4e6cc" />
+          <stop offset="0.38" stop-color="#a07850" />
+          <stop offset="1" stop-color="#23150c" />
+        </linearGradient>
+        <linearGradient id="maat-eye" x1="0" y1="0" x2="0" y2="1">
+          <stop stop-color="#62b8ee" />
+          <stop offset="0.4" stop-color="#1574c4" />
+          <stop offset="1" stop-color="#0a4a88" />
         </linearGradient>
         <filter id="maat-soft" x="-20%" y="-20%" width="140%" height="140%">
           <feDropShadow dx="0" dy="4" stdDeviation="3" flood-color="#2a160c" flood-opacity="0.28" />
@@ -34,77 +46,85 @@
 
       <g class="cat-tail">
         <path
-          d="M108 104 C138 98 150 74 140 54 C134 42 150 34 144 22"
-          stroke="url(#maat-seal)"
-          stroke-width="11"
-          stroke-linecap="round"
-        />
-        <path
-          d="M108 104 C138 98 150 74 140 54 C134 42 150 34 144 22"
-          stroke="#8a5a34"
-          stroke-width="4"
-          stroke-linecap="round"
-          opacity="0.35"
+          d="M108 118 C130 128 150 112 148 86 C146 62 160 46 152 22 C150 14 140 16 142 26 C150 48 136 62 134 86 C132 106 118 116 108 112 Z"
+          fill="url(#maat-seal)"
         />
       </g>
 
       <g class="cat-body" filter="url(#maat-soft)">
-        <ellipse class="cat-haunch" cx="62" cy="118" rx="16" ry="14" fill="url(#maat-cream)" />
-        <ellipse cx="80" cy="108" rx="36" ry="28" fill="url(#maat-cream)" />
-        <ellipse cx="84" cy="112" rx="22" ry="16" fill="#fff8e8" opacity="0.7" />
-        <ellipse class="cat-hind-paw" cx="56" cy="132" rx="11" ry="8" fill="url(#maat-seal)" />
+        <ellipse class="cat-haunch" cx="54" cy="124" rx="18" ry="16" fill="url(#maat-ivory)" />
+        <path
+          d="M80 70 C60 74 46 94 48 118 C50 140 64 152 80 154 C96 152 110 140 112 118 C114 94 100 74 80 70 Z"
+          fill="url(#maat-ivory)"
+        />
+        <ellipse cx="80" cy="112" rx="16" ry="18" fill="#fffaf6" opacity="0.8" />
+        <ellipse class="cat-hind-paw" cx="48" cy="144" rx="11" ry="7" fill="url(#maat-seal)" />
       </g>
 
       <g class="cat-legs">
         <g class="cat-paw cat-paw--l">
-          <rect x="58" y="112" width="13" height="24" rx="6.5" fill="url(#maat-cream)" />
-          <ellipse cx="64.5" cy="136" rx="8" ry="6.5" fill="url(#maat-seal)" />
+          <path
+            d="M58 116 C56 116 54 120 54 126 V140 C54 148 60 152 66 152 C72 152 76 148 76 140 V126 C76 120 72 116 68 116 Z"
+            fill="url(#maat-sock)"
+          />
         </g>
         <g class="cat-paw cat-paw--r">
-          <rect x="90" y="112" width="13" height="24" rx="6.5" fill="url(#maat-cream)" />
-          <ellipse cx="96.5" cy="136" rx="8" ry="6.5" fill="url(#maat-seal)" />
+          <path
+            d="M84 116 C82 116 80 120 80 126 V140 C80 148 86 152 92 152 C98 152 102 148 102 140 V126 C102 120 98 116 94 116 Z"
+            fill="url(#maat-sock)"
+          />
         </g>
         <g class="cat-groom-paw">
-          <rect x="46" y="86" width="12" height="22" rx="6" fill="url(#maat-cream)" />
-          <ellipse cx="52" cy="108" rx="7.5" ry="6" fill="url(#maat-seal)" />
+          <path
+            d="M40 80 C35 84 34 92 37 100 L42 114 C45 120 54 118 54 110 L50 96 C48 86 45 78 40 80 Z"
+            fill="url(#maat-sock)"
+          />
         </g>
       </g>
 
       <g class="cat-head" filter="url(#maat-soft)">
-        <path class="cat-ear cat-ear--l" d="M54 50 L40 14 L76 40 Z" fill="url(#maat-seal)" />
-        <path d="M54 44 L48 24 L68 40 Z" fill="#f4a6c1" />
-        <path class="cat-ear cat-ear--r" d="M106 50 L120 14 L84 40 Z" fill="url(#maat-seal)" />
-        <path d="M106 44 L112 24 L92 40 Z" fill="#f4a6c1" />
-
-        <circle cx="80" cy="64" r="32" fill="url(#maat-cream)" />
+        <ellipse cx="80" cy="82" rx="18" ry="10" fill="url(#maat-ivory)" />
         <path
           class="cat-mask"
-          d="M52 46 Q48 30 62 26 Q80 18 98 26 Q112 30 108 46 Q104 60 96 66 Q80 54 64 66 Q56 60 52 46 Z"
+          d="M80 20 C67 20 55 32 53 48 C51 64 62 82 80 92 C98 82 109 64 107 48 C105 32 93 20 80 20 Z"
           fill="url(#maat-mask)"
         />
-        <ellipse cx="80" cy="78" rx="16" ry="13" fill="#fff6e4" />
+        <path d="M70 80 Q80 90 90 80 Q80 86 70 80 Z" fill="#efe0c4" />
+        <g class="cat-ear cat-ear--l">
+          <path d="M56 42 L41 12 Q52 7 70 38 Z" fill="url(#maat-seal)" />
+          <path d="M55 38 L48 20 L64 36 Z" fill="#d0899c" />
+        </g>
+        <g class="cat-ear cat-ear--r">
+          <path d="M104 42 L119 12 Q108 7 90 38 Z" fill="url(#maat-seal)" />
+          <path d="M105 38 L112 20 L96 36 Z" fill="#d0899c" />
+        </g>
 
         <g class="cat-eyes cat-eyes--open">
-          <ellipse class="cat-eye" cx="67" cy="64" rx="7.2" ry="8.4" fill="#5ec8f5" />
-          <ellipse class="cat-eye" cx="93" cy="64" rx="7.2" ry="8.4" fill="#5ec8f5" />
-          <ellipse cx="67" cy="64" rx="2.4" ry="5.6" fill="#102033" />
-          <ellipse cx="93" cy="64" rx="2.4" ry="5.6" fill="#102033" />
-          <circle cx="69.2" cy="61.2" r="1.5" fill="#f0fbff" />
-          <circle cx="95.2" cy="61.2" r="1.5" fill="#f0fbff" />
+          <ellipse class="cat-eye" cx="66" cy="50" rx="7.6" ry="8.2" fill="url(#maat-eye)" />
+          <ellipse class="cat-eye" cx="94" cy="50" rx="7.6" ry="8.2" fill="url(#maat-eye)" />
+          <ellipse cx="66" cy="50" rx="7.6" ry="8.2" fill="none" stroke="#7ec8f0" stroke-width="0.9" />
+          <ellipse cx="94" cy="50" rx="7.6" ry="8.2" fill="none" stroke="#7ec8f0" stroke-width="0.9" />
+          <ellipse cx="66" cy="51" rx="1.8" ry="3.8" fill="#071422" />
+          <ellipse cx="94" cy="51" rx="1.8" ry="3.8" fill="#071422" />
+          <circle cx="68.4" cy="47.2" r="1.7" fill="#f4fbff" />
+          <circle cx="96.4" cy="47.2" r="1.7" fill="#f4fbff" />
+          <path d="M59 46 Q66 43 73 46" stroke="#c5ebff" stroke-width="1.15" stroke-linecap="round" />
+          <path d="M87 46 Q94 43 101 46" stroke="#c5ebff" stroke-width="1.15" stroke-linecap="round" />
         </g>
         <g class="cat-eyes cat-eyes--shut">
-          <path d="M60 66 Q67 70 74 66" stroke="#2a160c" stroke-width="2.4" stroke-linecap="round" />
-          <path d="M86 66 Q93 70 100 66" stroke="#2a160c" stroke-width="2.4" stroke-linecap="round" />
+          <path d="M58 52 Q66 58 74 52" stroke="#140a06" stroke-width="2.5" stroke-linecap="round" />
+          <path d="M86 52 Q94 58 102 52" stroke="#140a06" stroke-width="2.5" stroke-linecap="round" />
         </g>
 
-        <ellipse cx="80" cy="76" rx="3.3" ry="2.3" fill="#e879a9" />
-        <path class="cat-smile" d="M80 79 Q74 86 67 81" stroke="#7a4a2a" stroke-width="1.5" stroke-linecap="round" />
-        <path class="cat-smile" d="M80 79 Q86 86 93 81" stroke="#7a4a2a" stroke-width="1.5" stroke-linecap="round" />
+        <ellipse cx="80" cy="70" rx="3" ry="2.1" fill="#6b3a40" />
+        <path d="M80 72 V76" stroke="#4a242c" stroke-width="1.15" stroke-linecap="round" />
+        <path class="cat-smile" d="M80 76 Q76 80 71 78" stroke="#3d2418" stroke-width="1.25" stroke-linecap="round" />
+        <path class="cat-smile" d="M80 76 Q84 80 89 78" stroke="#3d2418" stroke-width="1.25" stroke-linecap="round" />
 
-        <path d="M58 78 H36" stroke="#d8b48a" stroke-width="1.2" opacity="0.8" />
-        <path d="M58 82 H34" stroke="#d8b48a" stroke-width="1.2" opacity="0.55" />
-        <path d="M102 78 H124" stroke="#d8b48a" stroke-width="1.2" opacity="0.8" />
-        <path d="M102 82 H126" stroke="#d8b48a" stroke-width="1.2" opacity="0.55" />
+        <path d="M58 72 H36" stroke="#c4a078" stroke-width="1.1" opacity="0.7" />
+        <path d="M59 76 H34" stroke="#c4a078" stroke-width="1.1" opacity="0.45" />
+        <path d="M102 72 H124" stroke="#c4a078" stroke-width="1.1" opacity="0.7" />
+        <path d="M101 76 H126" stroke="#c4a078" stroke-width="1.1" opacity="0.45" />
       </g>
     </svg>
   </div>
@@ -190,22 +210,22 @@
   }
 
   .cat-tail {
-    transform-origin: 108px 104px;
-    animation: maat-tail 1.9s ease-in-out infinite;
+    transform-origin: 108px 114px;
+    animation: maat-tail 2.4s ease-in-out infinite;
   }
 
   .cat-ear--l {
-    transform-origin: 58px 42px;
+    transform-origin: 56px 40px;
     animation: maat-ear 5.2s ease-in-out infinite;
   }
 
   .cat-ear--r {
-    transform-origin: 102px 42px;
+    transform-origin: 104px 40px;
     animation: maat-ear 5.2s ease-in-out 0.35s infinite;
   }
 
   .cat-eyes--open {
-    transform-origin: 80px 64px;
+    transform-origin: 80px 50px;
     animation: maat-blink 5s ease-in-out infinite;
   }
 
@@ -215,7 +235,7 @@
 
   .cat-groom-paw {
     opacity: 0;
-    transform-origin: 52px 90px;
+    transform-origin: 44px 86px;
   }
 
   .cursor-cat-wrap {
@@ -246,7 +266,7 @@
   }
 
   .cursor-cat.is-sleep .cursor-cat-svg {
-    transform: rotate(-16deg) translateY(8px);
+    transform: rotate(-10deg) translateY(6px);
   }
 
   .cursor-cat.is-play .cursor-cat-wrap {
@@ -255,7 +275,7 @@
 
   .cursor-cat.is-play .cat-paw--l,
   .cursor-cat.is-toy .cat-paw--l {
-    transform-origin: 64px 114px;
+    transform-origin: 65px 120px;
     animation: maat-paw-bat 0.42s ease-in-out infinite;
   }
 
@@ -264,8 +284,8 @@
   }
 
   .cursor-cat.is-chase .cat-body {
-    transform-origin: 80px 108px;
-    transform: scaleX(1.08) scaleY(0.92);
+    transform-origin: 80px 130px;
+    transform: scaleX(1.08) scaleY(0.94);
   }
 
   .cursor-cat.is-chase .cat-ear--l,
@@ -292,17 +312,17 @@
   }
 
   .cursor-cat.is-groom .cat-head {
-    transform-origin: 80px 64px;
+    transform-origin: 80px 52px;
     animation: maat-groom-head 1.4s ease-in-out infinite;
   }
 
   .cursor-cat.is-stretch .cat-body {
-    transform-origin: 80px 116px;
+    transform-origin: 80px 148px;
     animation: maat-stretch 2.2s ease-in-out infinite;
   }
 
   .cursor-cat.is-stretch .cat-head {
-    transform: translate(-8px, 10px);
+    transform: translate(-6px, 6px);
   }
 
   .cursor-cat.is-stretch .cat-tail {

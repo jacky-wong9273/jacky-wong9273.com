@@ -257,10 +257,10 @@
 @keyframes maat-tail {
   0%,
   100% {
-    transform: rotate(-10deg);
+    transform: rotate(-6deg);
   }
   50% {
-    transform: rotate(16deg);
+    transform: rotate(10deg);
   }
 }
 
@@ -327,7 +327,7 @@
     translate: 0 0;
   }
   40% {
-    translate: 0 -16px;
+    translate: 0 -10px;
   }
 }
 
@@ -377,7 +377,7 @@
     transform: scaleX(1) scaleY(1);
   }
   50% {
-    transform: scaleX(1.22) scaleY(0.78) translateX(8px);
+    transform: scaleX(1.12) scaleY(0.88) translateX(6px);
   }
 }
 
