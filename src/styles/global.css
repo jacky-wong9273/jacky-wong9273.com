@@ -116,7 +116,9 @@ html {
 }
 
 html.has-mouse-toy,
-html.has-mouse-toy * {
+html.has-mouse-toy *,
+html.has-mouse-toy a,
+html.has-mouse-toy button {
   cursor: none !important;
 }
 
