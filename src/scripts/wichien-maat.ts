@@ -115,6 +115,7 @@ export function initWichienMaat() {
   let lastToyBat = 0;
   let facing = 1;
   let virtualPhase = Math.random() * Math.PI * 2;
+  let cursorMode = false;
 
   const applyBehaviorClass = (next: Exclude<CatBehaviorId, 'auto'>) => {
     root.classList.remove(
@@ -158,10 +159,20 @@ export function initWichienMaat() {
     }
   };
 
+  const setCursorMode = (enabled: boolean) => {
+    cursorMode = enabled;
+    root.classList.toggle('is-touch', !enabled);
+    document.documentElement.classList.toggle('has-mouse-toy', enabled);
+    toy.hidden = false;
+  };
+
   const syncPointerMode = () => {
-    const fine = hasFinePointer();
-    root.classList.toggle('is-touch', !fine);
-    document.documentElement.classList.toggle('has-mouse-toy', fine);
+    if (!cursorMode && hasFinePointer()) {
+      root.classList.add('is-touch');
+    }
+    if (!hasFinePointer() && cursorMode) {
+      setCursorMode(false);
+    }
     toy.hidden = false;
   };
 
@@ -210,7 +221,7 @@ export function initWichienMaat() {
       if (behavior !== mode) setBehavior(mode, 1e9);
       return;
     }
-    if (hasFinePointer()) decideAutoDesktop(now);
+    if (cursorMode || hasFinePointer()) decideAutoDesktop(now);
     else decideAutoTouch(now);
   };
 
@@ -218,11 +229,18 @@ export function initWichienMaat() {
   setMode(mode, false);
   root.classList.add('is-on');
 
-  window.addEventListener(
+    window.addEventListener(
     'pointermove',
     (event) => {
       if (event.pointerType === 'touch') return;
-      if (!hasFinePointer()) return;
+      if (event.pointerType === 'mouse' || event.pointerType === '' || hasFinePointer()) {
+        if (!cursorMode) {
+          toyPos.x = event.clientX;
+          toyPos.y = event.clientY;
+          setCursorMode(true);
+        }
+      }
+      if (!cursorMode) return;
       const dx = event.clientX - pointer.x;
       const dy = event.clientY - pointer.y;
       pointer.x = event.clientX;
@@ -254,8 +272,8 @@ export function initWichienMaat() {
   }) as EventListener);
 
   const tick = (now: number) => {
-    const fine = hasFinePointer();
-    if (!fine) {
+    const fine = cursorMode;
+    if (!fine && !hasFinePointer()) {
       pointer = virtualMouse(now);
       pointerMoving = behavior === 'chase';
     } else if (now - lastPointerMove > IDLE_MS) {
