@@ -244,6 +244,165 @@
   }
 }
 
+@keyframes maat-bob {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -6px;
+  }
+}
+
+@keyframes maat-tail {
+  0%,
+  100% {
+    transform: rotate(-10deg);
+  }
+  50% {
+    transform: rotate(16deg);
+  }
+}
+
+@keyframes maat-blink {
+  0%,
+  90%,
+  100% {
+    transform: scaleY(1);
+  }
+  93% {
+    transform: scaleY(0.08);
+  }
+}
+
+@keyframes maat-ear {
+  0%,
+  78%,
+  100% {
+    transform: rotate(0deg);
+  }
+  84% {
+    transform: rotate(-10deg);
+  }
+  90% {
+    transform: rotate(7deg);
+  }
+}
+
+@keyframes maat-sleep-breathe {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 4px;
+  }
+}
+
+@keyframes maat-zzz {
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: translateY(4px) scale(0.86);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-8px) scale(1);
+  }
+}
+
+@keyframes maat-paw-bat {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(-38deg) translate(-4px, -6px);
+  }
+}
+
+@keyframes maat-play-hop {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  40% {
+    translate: 0 -16px;
+  }
+}
+
+@keyframes maat-chase-run {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -5px;
+  }
+}
+
+@keyframes maat-toy-wiggle {
+  0%,
+  100% {
+    rotate: -4deg;
+  }
+  50% {
+    rotate: 8deg;
+  }
+}
+
+@keyframes maat-groom {
+  0%,
+  100% {
+    transform: rotate(8deg);
+  }
+  50% {
+    transform: rotate(-28deg) translate(4px, -10px);
+  }
+}
+
+@keyframes maat-groom-head {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(-8deg);
+  }
+}
+
+@keyframes maat-stretch {
+  0%,
+  100% {
+    transform: scaleX(1) scaleY(1);
+  }
+  50% {
+    transform: scaleX(1.22) scaleY(0.78) translateX(8px);
+  }
+}
+
+@keyframes mouse-toy-scurry {
+  0%,
+  100% {
+    transform: rotate(-8deg) translateY(0);
+  }
+  50% {
+    transform: rotate(8deg) translateY(-2px);
+  }
+}
+
+@keyframes mouse-toy-bonk {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  40% {
+    transform: rotate(-24deg) scale(1.08) translate(-3px, -4px);
+  }
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+}
+
 @keyframes hologram-flicker {
   0%,
   97%,
@@ -278,6 +437,16 @@
 .cat-spark.is-pink {
   background: #f9a8d4;
   box-shadow: 0 0 8px #f472b6;
+}
+
+.cat-spark.is-cream {
+  background: #fde68a;
+  box-shadow: 0 0 8px #fbbf24;
+}
+
+.cat-spark.is-seal {
+  background: #c4a484;
+  box-shadow: 0 0 8px #6b4226;
 }
 
 /* ===== Scroll reveal ===== */

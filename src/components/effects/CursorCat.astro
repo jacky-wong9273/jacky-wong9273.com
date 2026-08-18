@@ -3,72 +3,131 @@
 
 <div class="cursor-cat" id="cursor-cat" aria-hidden="true">
   <div class="cursor-cat-trail" id="cursor-cat-trail"></div>
+
   <div class="cursor-cat-wrap">
-    <div class="cursor-cat-ring"></div>
-    <div class="cursor-cat-aura"></div>
-    <svg class="cursor-cat-svg" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <div class="cat-zzz" aria-hidden="true">
+      <span>z</span>
+      <span>z</span>
+      <span>Z</span>
+    </div>
+
+    <svg class="cursor-cat-svg" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <linearGradient id="cat-body" x1="18" y1="20" x2="78" y2="86" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#7dd3fc" />
-          <stop offset="0.45" stop-color="#a78bfa" />
-          <stop offset="1" stop-color="#f472b6" />
+        <linearGradient id="maat-cream" x1="40" y1="40" x2="128" y2="148" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#fffaf0" />
+          <stop offset="0.55" stop-color="#ffe7b3" />
+          <stop offset="1" stop-color="#f3cf86" />
         </linearGradient>
-        <linearGradient id="cat-inner" x1="30" y1="34" x2="66" y2="78" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#0b1220" />
-          <stop offset="1" stop-color="#1e1b4b" />
+        <linearGradient id="maat-seal" x1="48" y1="12" x2="112" y2="92" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#6b4226" />
+          <stop offset="0.5" stop-color="#3f2414" />
+          <stop offset="1" stop-color="#2a160c" />
         </linearGradient>
-        <filter id="cat-glow" x="-40%" y="-40%" width="180%" height="180%">
-          <feGaussianBlur stdDeviation="2.2" result="b" />
-          <feMerge>
-            <feMergeNode in="b" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
+        <linearGradient id="maat-mask" x1="80" y1="22" x2="80" y2="78" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#4a2b18" />
+          <stop offset="1" stop-color="#2d190e" />
+        </linearGradient>
+        <filter id="maat-soft" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="4" stdDeviation="3" flood-color="#2a160c" flood-opacity="0.28" />
         </filter>
       </defs>
 
-      <g class="cat-tail" filter="url(#cat-glow)">
+      <g class="cat-tail">
         <path
-          d="M58 64 C78 62, 86 48, 80 34 C76 26, 88 22, 84 16"
-          stroke="url(#cat-body)"
-          stroke-width="5"
+          d="M108 104 C138 98 150 74 140 54 C134 42 150 34 144 22"
+          stroke="url(#maat-seal)"
+          stroke-width="11"
           stroke-linecap="round"
         />
-        <circle cx="84" cy="16" r="3.2" fill="#f472b6" />
+        <path
+          d="M108 104 C138 98 150 74 140 54 C134 42 150 34 144 22"
+          stroke="#8a5a34"
+          stroke-width="4"
+          stroke-linecap="round"
+          opacity="0.35"
+        />
       </g>
 
-      <g class="cat-body" filter="url(#cat-glow)">
-        <ellipse cx="46" cy="62" rx="20" ry="16" fill="url(#cat-inner)" stroke="url(#cat-body)" stroke-width="2.4" />
-        <path d="M36 70 C40 78, 52 78, 56 70" stroke="#38bdf8" stroke-width="1.2" opacity="0.7" />
-        <circle cx="40" cy="58" r="1.4" fill="#38bdf8" opacity="0.8" />
-        <circle cx="52" cy="60" r="1.4" fill="#f472b6" opacity="0.8" />
+      <g class="cat-body" filter="url(#maat-soft)">
+        <ellipse class="cat-haunch" cx="62" cy="118" rx="16" ry="14" fill="url(#maat-cream)" />
+        <ellipse cx="80" cy="108" rx="36" ry="28" fill="url(#maat-cream)" />
+        <ellipse cx="84" cy="112" rx="22" ry="16" fill="#fff8e8" opacity="0.7" />
+        <ellipse class="cat-hind-paw" cx="56" cy="132" rx="11" ry="8" fill="url(#maat-seal)" />
       </g>
 
-      <g class="cat-head" filter="url(#cat-glow)">
-        <path class="cat-ear cat-ear--l" d="M26 36 L22 16 L40 28 Z" fill="url(#cat-inner)" stroke="url(#cat-body)" stroke-width="2" />
-        <path class="cat-ear cat-ear--r" d="M70 36 L74 16 L56 28 Z" fill="url(#cat-inner)" stroke="url(#cat-body)" stroke-width="2" />
-        <path d="M28 20 L32 28" stroke="#f472b6" stroke-width="1.6" opacity="0.85" />
-        <path d="M68 20 L64 28" stroke="#f472b6" stroke-width="1.6" opacity="0.85" />
+      <g class="cat-legs">
+        <g class="cat-paw cat-paw--l">
+          <rect x="58" y="112" width="13" height="24" rx="6.5" fill="url(#maat-cream)" />
+          <ellipse cx="64.5" cy="136" rx="8" ry="6.5" fill="url(#maat-seal)" />
+        </g>
+        <g class="cat-paw cat-paw--r">
+          <rect x="90" y="112" width="13" height="24" rx="6.5" fill="url(#maat-cream)" />
+          <ellipse cx="96.5" cy="136" rx="8" ry="6.5" fill="url(#maat-seal)" />
+        </g>
+        <g class="cat-groom-paw">
+          <rect x="46" y="86" width="12" height="22" rx="6" fill="url(#maat-cream)" />
+          <ellipse cx="52" cy="108" rx="7.5" ry="6" fill="url(#maat-seal)" />
+        </g>
+      </g>
 
-        <circle cx="48" cy="42" r="18" fill="url(#cat-inner)" stroke="url(#cat-body)" stroke-width="2.4" />
+      <g class="cat-head" filter="url(#maat-soft)">
+        <path class="cat-ear cat-ear--l" d="M54 50 L40 14 L76 40 Z" fill="url(#maat-seal)" />
+        <path d="M54 44 L48 24 L68 40 Z" fill="#f4a6c1" />
+        <path class="cat-ear cat-ear--r" d="M106 50 L120 14 L84 40 Z" fill="url(#maat-seal)" />
+        <path d="M106 44 L112 24 L92 40 Z" fill="#f4a6c1" />
 
-        <g class="cat-eyes">
-          <ellipse class="cat-eye" cx="41" cy="42" rx="3.4" ry="4.2" fill="#7dd3fc" />
-          <ellipse class="cat-eye" cx="55" cy="42" rx="3.4" ry="4.2" fill="#7dd3fc" />
-          <circle cx="42.2" cy="40.8" r="1" fill="#ecfeff" />
-          <circle cx="56.2" cy="40.8" r="1" fill="#ecfeff" />
+        <circle cx="80" cy="64" r="32" fill="url(#maat-cream)" />
+        <path
+          class="cat-mask"
+          d="M52 46 Q48 30 62 26 Q80 18 98 26 Q112 30 108 46 Q104 60 96 66 Q80 54 64 66 Q56 60 52 46 Z"
+          fill="url(#maat-mask)"
+        />
+        <ellipse cx="80" cy="78" rx="16" ry="13" fill="#fff6e4" />
+
+        <g class="cat-eyes cat-eyes--open">
+          <ellipse class="cat-eye" cx="67" cy="64" rx="7.2" ry="8.4" fill="#5ec8f5" />
+          <ellipse class="cat-eye" cx="93" cy="64" rx="7.2" ry="8.4" fill="#5ec8f5" />
+          <ellipse cx="67" cy="64" rx="2.4" ry="5.6" fill="#102033" />
+          <ellipse cx="93" cy="64" rx="2.4" ry="5.6" fill="#102033" />
+          <circle cx="69.2" cy="61.2" r="1.5" fill="#f0fbff" />
+          <circle cx="95.2" cy="61.2" r="1.5" fill="#f0fbff" />
+        </g>
+        <g class="cat-eyes cat-eyes--shut">
+          <path d="M60 66 Q67 70 74 66" stroke="#2a160c" stroke-width="2.4" stroke-linecap="round" />
+          <path d="M86 66 Q93 70 100 66" stroke="#2a160c" stroke-width="2.4" stroke-linecap="round" />
         </g>
 
-        <path d="M48 46 L46.2 49 L49.8 49 Z" fill="#f9a8d4" />
-        <path d="M48 49 C46 52, 43 51, 42 50" stroke="#94a3b8" stroke-width="1" />
-        <path d="M48 49 C50 52, 53 51, 54 50" stroke="#94a3b8" stroke-width="1" />
+        <ellipse cx="80" cy="76" rx="3.3" ry="2.3" fill="#e879a9" />
+        <path class="cat-smile" d="M80 79 Q74 86 67 81" stroke="#7a4a2a" stroke-width="1.5" stroke-linecap="round" />
+        <path class="cat-smile" d="M80 79 Q86 86 93 81" stroke="#7a4a2a" stroke-width="1.5" stroke-linecap="round" />
 
-        <path d="M30 45 H20" stroke="#67e8f9" stroke-width="1" opacity="0.55" />
-        <path d="M30 48 H18" stroke="#c4b5fd" stroke-width="1" opacity="0.45" />
-        <path d="M66 45 H76" stroke="#67e8f9" stroke-width="1" opacity="0.55" />
-        <path d="M66 48 H78" stroke="#c4b5fd" stroke-width="1" opacity="0.45" />
+        <path d="M58 78 H36" stroke="#d8b48a" stroke-width="1.2" opacity="0.8" />
+        <path d="M58 82 H34" stroke="#d8b48a" stroke-width="1.2" opacity="0.55" />
+        <path d="M102 78 H124" stroke="#d8b48a" stroke-width="1.2" opacity="0.8" />
+        <path d="M102 82 H126" stroke="#d8b48a" stroke-width="1.2" opacity="0.55" />
       </g>
     </svg>
   </div>
+</div>
+
+<div class="mouse-toy" id="mouse-toy" aria-hidden="true">
+  <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M30 30 C40 24 44 16 41 10" stroke="#e879a9" stroke-width="2.2" stroke-linecap="round" />
+    <circle cx="40.5" cy="9.5" r="2" fill="#f9a8d4" />
+    <ellipse cx="18" cy="26" rx="13" ry="10" fill="#d4d0dc" />
+    <ellipse cx="20" cy="27" rx="8" ry="6" fill="#eeeaf3" />
+    <circle cx="10" cy="18" r="5.2" fill="#c8c3d0" />
+    <circle cx="18" cy="16" r="4.6" fill="#c8c3d0" />
+    <circle cx="10" cy="18" r="2.6" fill="#f8b4cb" />
+    <circle cx="18" cy="16" r="2.2" fill="#f8b4cb" />
+    <circle cx="13" cy="25" r="1.15" fill="#2a160c" />
+    <circle cx="19" cy="24.4" r="1.15" fill="#2a160c" />
+    <circle cx="15.6" cy="28.2" r="1.5" fill="#f472b6" />
+    <path d="M14 30 Q16 32 19 30" stroke="#7a4a2a" stroke-width="1.1" stroke-linecap="round" />
+    <path d="M8 32 L6 36" stroke="#b8b2c0" stroke-width="1.4" stroke-linecap="round" />
+    <path d="M14 34 L13 38" stroke="#b8b2c0" stroke-width="1.4" stroke-linecap="round" />
+    <path d="M22 33 L23 37" stroke="#b8b2c0" stroke-width="1.4" stroke-linecap="round" />
+  </svg>
 </div>
 
 <style>
@@ -89,63 +148,216 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 88px;
-    height: 88px;
+    width: 124px;
+    height: 124px;
     will-change: transform;
-    animation: cat-bob 2.6s ease-in-out infinite;
-  }
-
-  .cursor-cat.is-curious .cursor-cat-wrap {
-    animation-duration: 1.4s;
-  }
-
-  .cursor-cat-ring {
-    position: absolute;
-    inset: -6px;
-    border-radius: 50%;
-    border: 2px dashed rgba(125, 211, 252, 0.8);
-    animation: cat-orbit 8s linear infinite;
-  }
-
-  .cursor-cat-aura {
-    position: absolute;
-    inset: 6px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(56, 189, 248, 0.28), rgba(167, 139, 250, 0.08) 55%, transparent 72%);
-    filter: blur(6px);
-    animation: hologram-flicker 4s steps(2, end) infinite;
+    transform-origin: 50% 70%;
   }
 
   .cursor-cat-svg {
-    position: relative;
-    width: 88px;
-    height: 88px;
+    width: 124px;
+    height: 124px;
     overflow: visible;
-    filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.45));
+    filter: drop-shadow(0 8px 14px rgba(42, 22, 12, 0.28));
   }
 
-  .cursor-cat.is-curious .cursor-cat-svg {
-    filter: drop-shadow(0 0 16px rgba(244, 114, 182, 0.65));
+  .cat-zzz {
+    position: absolute;
+    top: 6px;
+    right: 10px;
+    display: flex;
+    gap: 2px;
+    opacity: 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: #fde68a;
+    text-shadow: 0 0 8px rgba(251, 191, 36, 0.45);
+    pointer-events: none;
+  }
+
+  .cat-zzz span {
+    animation: maat-zzz 2.2s ease-in-out infinite;
+  }
+
+  .cat-zzz span:nth-child(2) {
+    animation-delay: 0.25s;
+    font-size: 0.85em;
+  }
+
+  .cat-zzz span:nth-child(3) {
+    animation-delay: 0.5s;
+    font-size: 1.15em;
   }
 
   .cat-tail {
-    transform-origin: 58px 64px;
-    animation: cat-tail 1.8s ease-in-out infinite;
+    transform-origin: 108px 104px;
+    animation: maat-tail 1.9s ease-in-out infinite;
   }
 
   .cat-ear--l {
-    transform-origin: 32px 30px;
-    animation: cat-ear 5s ease-in-out infinite;
+    transform-origin: 58px 42px;
+    animation: maat-ear 5.2s ease-in-out infinite;
   }
 
   .cat-ear--r {
-    transform-origin: 64px 30px;
-    animation: cat-ear 5s ease-in-out 0.4s infinite;
+    transform-origin: 102px 42px;
+    animation: maat-ear 5.2s ease-in-out 0.35s infinite;
   }
 
-  .cat-eyes {
-    transform-origin: 48px 42px;
-    animation: cat-blink 4.6s ease-in-out infinite;
+  .cat-eyes--open {
+    transform-origin: 80px 64px;
+    animation: maat-blink 5s ease-in-out infinite;
+  }
+
+  .cat-eyes--shut {
+    opacity: 0;
+  }
+
+  .cat-groom-paw {
+    opacity: 0;
+    transform-origin: 52px 90px;
+  }
+
+  .cursor-cat-wrap {
+    animation: maat-bob 2.8s ease-in-out infinite;
+  }
+
+  .cursor-cat.is-sleep .cursor-cat-wrap {
+    animation: maat-sleep-breathe 3.4s ease-in-out infinite;
+  }
+
+  .cursor-cat.is-sleep .cat-eyes--open,
+  .cursor-cat.is-groom .cat-eyes--open {
+    opacity: 0;
+    animation: none;
+  }
+
+  .cursor-cat.is-sleep .cat-eyes--shut,
+  .cursor-cat.is-groom .cat-eyes--shut {
+    opacity: 1;
+  }
+
+  .cursor-cat.is-sleep .cat-zzz {
+    opacity: 1;
+  }
+
+  .cursor-cat.is-sleep .cat-tail {
+    animation-duration: 3.6s;
+  }
+
+  .cursor-cat.is-sleep .cursor-cat-svg {
+    transform: rotate(-16deg) translateY(8px);
+  }
+
+  .cursor-cat.is-play .cursor-cat-wrap {
+    animation: maat-play-hop 0.7s ease-in-out infinite;
+  }
+
+  .cursor-cat.is-play .cat-paw--l,
+  .cursor-cat.is-toy .cat-paw--l {
+    transform-origin: 64px 114px;
+    animation: maat-paw-bat 0.42s ease-in-out infinite;
+  }
+
+  .cursor-cat.is-chase .cursor-cat-wrap {
+    animation: maat-chase-run 0.36s ease-in-out infinite;
+  }
+
+  .cursor-cat.is-chase .cat-body {
+    transform-origin: 80px 108px;
+    transform: scaleX(1.08) scaleY(0.92);
+  }
+
+  .cursor-cat.is-chase .cat-ear--l,
+  .cursor-cat.is-chase .cat-ear--r {
+    transform: rotate(-18deg);
+    animation: none;
+  }
+
+  .cursor-cat.is-excited .cat-tail {
+    animation-duration: 0.45s;
+  }
+
+  .cursor-cat.is-toy .cursor-cat-wrap {
+    animation: maat-toy-wiggle 0.55s ease-in-out infinite;
+  }
+
+  .cursor-cat.is-groom .cat-groom-paw {
+    opacity: 1;
+    animation: maat-groom 1.4s ease-in-out infinite;
+  }
+
+  .cursor-cat.is-groom .cat-paw--l {
+    opacity: 0;
+  }
+
+  .cursor-cat.is-groom .cat-head {
+    transform-origin: 80px 64px;
+    animation: maat-groom-head 1.4s ease-in-out infinite;
+  }
+
+  .cursor-cat.is-stretch .cat-body {
+    transform-origin: 80px 116px;
+    animation: maat-stretch 2.2s ease-in-out infinite;
+  }
+
+  .cursor-cat.is-stretch .cat-head {
+    transform: translate(-8px, 10px);
+  }
+
+  .cursor-cat.is-stretch .cat-tail {
+    animation-duration: 2.4s;
+  }
+
+  .cursor-cat.is-loaf .cat-paw--l,
+  .cursor-cat.is-loaf .cat-paw--r,
+  .cursor-cat.is-loaf .cat-hind-paw {
+    transform: translateY(-8px) scaleY(0.55);
+  }
+
+  .cursor-cat.is-loaf .cat-body {
+    transform: scaleY(0.92) translateY(6px);
+  }
+
+  .cursor-cat.is-loaf .cursor-cat-wrap {
+    animation: maat-sleep-breathe 4s ease-in-out infinite;
+  }
+
+  .mouse-toy {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 42px;
+    height: 42px;
+    margin: -10px 0 0 -8px;
+    will-change: transform;
+    z-index: 130;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.35));
+  }
+
+  .mouse-toy.is-visible {
+    opacity: 1;
+  }
+
+  .mouse-toy[hidden] {
+    display: none;
+  }
+
+  .mouse-toy svg {
+    width: 42px;
+    height: 42px;
+    overflow: visible;
+  }
+
+  .mouse-toy.is-running svg {
+    animation: mouse-toy-scurry 0.28s ease-in-out infinite;
+  }
+
+  .mouse-toy.is-batted svg {
+    animation: mouse-toy-bonk 0.28s ease-out;
   }
 
   .cursor-cat-trail {
@@ -153,90 +365,34 @@
     inset: 0;
   }
 
-  @media (max-width: 768px), (prefers-reduced-motion: reduce) {
-    .cursor-cat {
-      display: none;
+  @media (max-width: 768px) {
+    .cursor-cat-wrap,
+    .cursor-cat-svg {
+      width: 104px;
+      height: 104px;
+    }
+
+    .mouse-toy,
+    .mouse-toy svg {
+      width: 34px;
+      height: 34px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cursor-cat-wrap,
+    .cat-tail,
+    .cat-ear--l,
+    .cat-ear--r,
+    .cat-eyes--open,
+    .mouse-toy svg {
+      animation: none !important;
     }
   }
 </style>
 
 <script>
-  const root = document.getElementById('cursor-cat');
-  const wrap = root?.querySelector<HTMLElement>('.cursor-cat-wrap');
-  const trail = document.getElementById('cursor-cat-trail');
+  import { initWichienMaat } from '../../scripts/wichien-maat';
 
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const compact = window.matchMedia('(max-width: 768px)').matches;
-
-  if (root && wrap && trail && !reduceMotion && !compact) {
-    const offsetX = 40;
-    const offsetY = 28;
-    let targetX = window.innerWidth * 0.72;
-    let targetY = window.innerHeight * 0.24;
-    let x = targetX;
-    let y = targetY;
-    let prevX = x;
-    let sparkBudget = 0;
-
-    wrap.style.transform = `translate3d(${x + offsetX}px, ${y + offsetY}px, 0)`;
-    root.classList.add('is-on');
-
-    const sparkPool: HTMLSpanElement[] = [];
-    const hues = ['', 'is-violet', 'is-pink'];
-    for (let i = 0; i < 18; i++) {
-      const spark = document.createElement('span');
-      spark.className = 'cat-spark';
-      spark.style.display = 'none';
-      trail.appendChild(spark);
-      sparkPool.push(spark);
-    }
-    let sparkIndex = 0;
-
-    const spawnSpark = (sx: number, sy: number) => {
-      const spark = sparkPool[sparkIndex % sparkPool.length];
-      sparkIndex++;
-      spark.className = `cat-spark ${hues[sparkIndex % hues.length]}`;
-      spark.style.display = 'block';
-      spark.style.left = `${sx}px`;
-      spark.style.top = `${sy}px`;
-      spark.style.animation = 'none';
-      void spark.offsetWidth;
-      spark.style.animation = '';
-    };
-
-    window.addEventListener(
-      'pointermove',
-      (event) => {
-        if (event.pointerType === 'touch') return;
-        targetX = event.clientX;
-        targetY = event.clientY;
-        document.documentElement.style.setProperty('--mouse-x', `${event.clientX}px`);
-        document.documentElement.style.setProperty('--mouse-y', `${event.clientY}px`);
-
-        sparkBudget += 1;
-        if (sparkBudget > 2) {
-          sparkBudget = 0;
-          spawnSpark(event.clientX, event.clientY);
-        }
-      },
-      { passive: true },
-    );
-
-    document.addEventListener('mouseover', (event) => {
-      const hot = (event.target as Element | null)?.closest('a, button, input, .card');
-      root.classList.toggle('is-curious', Boolean(hot));
-    });
-
-    const tick = () => {
-      x += (targetX - x) * 0.14;
-      y += (targetY - y) * 0.14;
-      const vx = x - prevX;
-      prevX = x;
-      const tilt = Math.max(-20, Math.min(20, vx * 7));
-      wrap.style.transform = `translate3d(${x + offsetX}px, ${y + offsetY}px, 0) rotate(${tilt}deg)`;
-      requestAnimationFrame(tick);
-    };
-
-    requestAnimationFrame(tick);
-  }
+  initWichienMaat();
 </script>
