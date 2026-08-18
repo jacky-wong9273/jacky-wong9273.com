@@ -1,0 +1,242 @@
+---
+---
+
+<div class="cursor-cat" id="cursor-cat" aria-hidden="true">
+  <div class="cursor-cat-trail" id="cursor-cat-trail"></div>
+  <div class="cursor-cat-wrap">
+    <div class="cursor-cat-ring"></div>
+    <div class="cursor-cat-aura"></div>
+    <svg class="cursor-cat-svg" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="cat-body" x1="18" y1="20" x2="78" y2="86" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#7dd3fc" />
+          <stop offset="0.45" stop-color="#a78bfa" />
+          <stop offset="1" stop-color="#f472b6" />
+        </linearGradient>
+        <linearGradient id="cat-inner" x1="30" y1="34" x2="66" y2="78" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#0b1220" />
+          <stop offset="1" stop-color="#1e1b4b" />
+        </linearGradient>
+        <filter id="cat-glow" x="-40%" y="-40%" width="180%" height="180%">
+          <feGaussianBlur stdDeviation="2.2" result="b" />
+          <feMerge>
+            <feMergeNode in="b" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+
+      <g class="cat-tail" filter="url(#cat-glow)">
+        <path
+          d="M58 64 C78 62, 86 48, 80 34 C76 26, 88 22, 84 16"
+          stroke="url(#cat-body)"
+          stroke-width="5"
+          stroke-linecap="round"
+        />
+        <circle cx="84" cy="16" r="3.2" fill="#f472b6" />
+      </g>
+
+      <g class="cat-body" filter="url(#cat-glow)">
+        <ellipse cx="46" cy="62" rx="20" ry="16" fill="url(#cat-inner)" stroke="url(#cat-body)" stroke-width="2.4" />
+        <path d="M36 70 C40 78, 52 78, 56 70" stroke="#38bdf8" stroke-width="1.2" opacity="0.7" />
+        <circle cx="40" cy="58" r="1.4" fill="#38bdf8" opacity="0.8" />
+        <circle cx="52" cy="60" r="1.4" fill="#f472b6" opacity="0.8" />
+      </g>
+
+      <g class="cat-head" filter="url(#cat-glow)">
+        <path class="cat-ear cat-ear--l" d="M26 36 L22 16 L40 28 Z" fill="url(#cat-inner)" stroke="url(#cat-body)" stroke-width="2" />
+        <path class="cat-ear cat-ear--r" d="M70 36 L74 16 L56 28 Z" fill="url(#cat-inner)" stroke="url(#cat-body)" stroke-width="2" />
+        <path d="M28 20 L32 28" stroke="#f472b6" stroke-width="1.6" opacity="0.85" />
+        <path d="M68 20 L64 28" stroke="#f472b6" stroke-width="1.6" opacity="0.85" />
+
+        <circle cx="48" cy="42" r="18" fill="url(#cat-inner)" stroke="url(#cat-body)" stroke-width="2.4" />
+
+        <g class="cat-eyes">
+          <ellipse class="cat-eye" cx="41" cy="42" rx="3.4" ry="4.2" fill="#7dd3fc" />
+          <ellipse class="cat-eye" cx="55" cy="42" rx="3.4" ry="4.2" fill="#7dd3fc" />
+          <circle cx="42.2" cy="40.8" r="1" fill="#ecfeff" />
+          <circle cx="56.2" cy="40.8" r="1" fill="#ecfeff" />
+        </g>
+
+        <path d="M48 46 L46.2 49 L49.8 49 Z" fill="#f9a8d4" />
+        <path d="M48 49 C46 52, 43 51, 42 50" stroke="#94a3b8" stroke-width="1" />
+        <path d="M48 49 C50 52, 53 51, 54 50" stroke="#94a3b8" stroke-width="1" />
+
+        <path d="M30 45 H20" stroke="#67e8f9" stroke-width="1" opacity="0.55" />
+        <path d="M30 48 H18" stroke="#c4b5fd" stroke-width="1" opacity="0.45" />
+        <path d="M66 45 H76" stroke="#67e8f9" stroke-width="1" opacity="0.55" />
+        <path d="M66 48 H78" stroke="#c4b5fd" stroke-width="1" opacity="0.45" />
+      </g>
+    </svg>
+  </div>
+</div>
+
+<style>
+  .cursor-cat {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+
+  .cursor-cat.is-on {
+    opacity: 1;
+  }
+
+  .cursor-cat-wrap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 88px;
+    height: 88px;
+    will-change: transform;
+    animation: cat-bob 2.6s ease-in-out infinite;
+  }
+
+  .cursor-cat.is-curious .cursor-cat-wrap {
+    animation-duration: 1.4s;
+  }
+
+  .cursor-cat-ring {
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    border: 2px dashed rgba(125, 211, 252, 0.8);
+    animation: cat-orbit 8s linear infinite;
+  }
+
+  .cursor-cat-aura {
+    position: absolute;
+    inset: 6px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(56, 189, 248, 0.28), rgba(167, 139, 250, 0.08) 55%, transparent 72%);
+    filter: blur(6px);
+    animation: hologram-flicker 4s steps(2, end) infinite;
+  }
+
+  .cursor-cat-svg {
+    position: relative;
+    width: 88px;
+    height: 88px;
+    overflow: visible;
+    filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.45));
+  }
+
+  .cursor-cat.is-curious .cursor-cat-svg {
+    filter: drop-shadow(0 0 16px rgba(244, 114, 182, 0.65));
+  }
+
+  .cat-tail {
+    transform-origin: 58px 64px;
+    animation: cat-tail 1.8s ease-in-out infinite;
+  }
+
+  .cat-ear--l {
+    transform-origin: 32px 30px;
+    animation: cat-ear 5s ease-in-out infinite;
+  }
+
+  .cat-ear--r {
+    transform-origin: 64px 30px;
+    animation: cat-ear 5s ease-in-out 0.4s infinite;
+  }
+
+  .cat-eyes {
+    transform-origin: 48px 42px;
+    animation: cat-blink 4.6s ease-in-out infinite;
+  }
+
+  .cursor-cat-trail {
+    position: absolute;
+    inset: 0;
+  }
+
+  @media (max-width: 768px), (prefers-reduced-motion: reduce) {
+    .cursor-cat {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  const root = document.getElementById('cursor-cat');
+  const wrap = root?.querySelector<HTMLElement>('.cursor-cat-wrap');
+  const trail = document.getElementById('cursor-cat-trail');
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const compact = window.matchMedia('(max-width: 768px)').matches;
+
+  if (root && wrap && trail && !reduceMotion && !compact) {
+    const offsetX = 40;
+    const offsetY = 28;
+    let targetX = window.innerWidth * 0.72;
+    let targetY = window.innerHeight * 0.24;
+    let x = targetX;
+    let y = targetY;
+    let prevX = x;
+    let sparkBudget = 0;
+
+    wrap.style.transform = `translate3d(${x + offsetX}px, ${y + offsetY}px, 0)`;
+    root.classList.add('is-on');
+
+    const sparkPool: HTMLSpanElement[] = [];
+    const hues = ['', 'is-violet', 'is-pink'];
+    for (let i = 0; i < 18; i++) {
+      const spark = document.createElement('span');
+      spark.className = 'cat-spark';
+      spark.style.display = 'none';
+      trail.appendChild(spark);
+      sparkPool.push(spark);
+    }
+    let sparkIndex = 0;
+
+    const spawnSpark = (sx: number, sy: number) => {
+      const spark = sparkPool[sparkIndex % sparkPool.length];
+      sparkIndex++;
+      spark.className = `cat-spark ${hues[sparkIndex % hues.length]}`;
+      spark.style.display = 'block';
+      spark.style.left = `${sx}px`;
+      spark.style.top = `${sy}px`;
+      spark.style.animation = 'none';
+      void spark.offsetWidth;
+      spark.style.animation = '';
+    };
+
+    window.addEventListener(
+      'pointermove',
+      (event) => {
+        if (event.pointerType === 'touch') return;
+        targetX = event.clientX;
+        targetY = event.clientY;
+        document.documentElement.style.setProperty('--mouse-x', `${event.clientX}px`);
+        document.documentElement.style.setProperty('--mouse-y', `${event.clientY}px`);
+
+        sparkBudget += 1;
+        if (sparkBudget > 2) {
+          sparkBudget = 0;
+          spawnSpark(event.clientX, event.clientY);
+        }
+      },
+      { passive: true },
+    );
+
+    document.addEventListener('mouseover', (event) => {
+      const hot = (event.target as Element | null)?.closest('a, button, input, .card');
+      root.classList.toggle('is-curious', Boolean(hot));
+    });
+
+    const tick = () => {
+      x += (targetX - x) * 0.14;
+      y += (targetY - y) * 0.14;
+      const vx = x - prevX;
+      prevX = x;
+      const tilt = Math.max(-20, Math.min(20, vx * 7));
+      wrap.style.transform = `translate3d(${x + offsetX}px, ${y + offsetY}px, 0) rotate(${tilt}deg)`;
+      requestAnimationFrame(tick);
+    };
+
+    requestAnimationFrame(tick);
+  }
+</script>

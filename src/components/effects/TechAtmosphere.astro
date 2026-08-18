@@ -1,0 +1,213 @@
+---
+const particles = Array.from({ length: 22 }, (_, i) => {
+  const left = ((i * 37) % 100).toFixed(1);
+  const top = ((i * 53) % 100).toFixed(1);
+  const delay = ((i * 0.37) % 8).toFixed(2);
+  const duration = (10 + ((i * 1.7) % 10)).toFixed(1);
+  const size = 1 + (i % 3);
+  const hue = i % 3;
+  return { left, top, delay, duration, size, hue };
+});
+---
+
+<div class="tech-atmosphere" aria-hidden="true">
+  <div class="tech-grid"></div>
+  <div class="tech-aurora tech-aurora--cyan"></div>
+  <div class="tech-aurora tech-aurora--violet"></div>
+  <div class="tech-aurora tech-aurora--magenta"></div>
+  <div class="tech-horizon">
+    <div class="tech-horizon-grid"></div>
+  </div>
+  <div class="tech-spotlight"></div>
+  <div class="tech-scanline"></div>
+  <div class="tech-scanlines"></div>
+  <div class="tech-vignette"></div>
+  <div class="tech-particles">
+    {particles.map((p) => (
+      <span
+        class:list={['tech-particle', `tech-particle--${p.hue}`]}
+        style={`left:${p.left}%;top:${p.top}%;width:${p.size}px;height:${p.size}px;animation-delay:${p.delay}s;animation-duration:${p.duration}s;--dx:${(p.hue - 1) * 40}px;--dy:${-60 - p.hue * 20}px;`}
+      />
+    ))}
+  </div>
+</div>
+
+<style>
+  .tech-atmosphere {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .tech-grid {
+    position: absolute;
+    inset: -20%;
+    background-image:
+      linear-gradient(rgba(56, 189, 248, 0.1) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(167, 139, 250, 0.08) 1px, transparent 1px);
+    background-size: 56px 56px;
+    animation: grid-drift 48s linear infinite;
+    mask-image: radial-gradient(ellipse 80% 70% at 50% 35%, #000 10%, transparent 78%);
+  }
+
+  .tech-aurora {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    animation: aurora-drift 22s ease-in-out infinite;
+    opacity: 0.28;
+  }
+
+  .tech-aurora--cyan {
+    width: 42vw;
+    height: 42vw;
+    min-width: 280px;
+    background: #38bdf8;
+    top: -8%;
+    right: -6%;
+  }
+
+  .tech-aurora--violet {
+    width: 36vw;
+    height: 36vw;
+    min-width: 240px;
+    background: #a78bfa;
+    top: 28%;
+    left: -10%;
+    animation-duration: 28s;
+    animation-direction: reverse;
+  }
+
+  .tech-aurora--magenta {
+    width: 28vw;
+    height: 28vw;
+    min-width: 200px;
+    background: #f472b6;
+    bottom: 8%;
+    right: 18%;
+    animation-duration: 26s;
+    opacity: 0.18;
+  }
+
+  .tech-horizon {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -8%;
+    height: 52vh;
+    perspective: 320px;
+    mask-image: linear-gradient(to top, #000 28%, transparent 90%);
+    opacity: 0.88;
+  }
+
+  .tech-horizon-grid {
+    position: absolute;
+    inset: 0;
+    transform: rotateX(68deg);
+    transform-origin: center bottom;
+    background-image:
+      linear-gradient(rgba(56, 189, 248, 0.38) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(56, 189, 248, 0.2) 1px, transparent 1px);
+    background-size: 48px 48px;
+    animation: horizon-rush 8s linear infinite;
+  }
+
+  .tech-spotlight {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      520px circle at var(--mouse-x, 50%) var(--mouse-y, 30%),
+      rgba(56, 189, 248, 0.16),
+      rgba(167, 139, 250, 0.07) 28%,
+      transparent 55%
+    );
+    transition: background 80ms linear;
+  }
+
+  .tech-scanline {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 18vh;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      rgba(56, 189, 248, 0.045),
+      transparent
+    );
+    animation: scanline-move 11s linear infinite;
+    mix-blend-mode: screen;
+  }
+
+  .tech-scanlines {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 2px,
+      rgba(0, 0, 0, 0.08) 3px
+    );
+    opacity: 0.28;
+  }
+
+  .tech-vignette {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 58%, rgba(2, 6, 14, 0.52) 100%);
+  }
+
+  .tech-particles {
+    position: absolute;
+    inset: 0;
+  }
+
+  .tech-particle {
+    position: absolute;
+    border-radius: 50%;
+    background: #7dd3fc;
+    box-shadow: 0 0 8px #38bdf8;
+    animation: particle-drift linear infinite;
+  }
+
+  .tech-particle--1 {
+    background: #c4b5fd;
+    box-shadow: 0 0 8px #a78bfa;
+  }
+
+  .tech-particle--2 {
+    background: #f9a8d4;
+    box-shadow: 0 0 8px #f472b6;
+  }
+
+  @media (max-width: 768px) {
+    .tech-horizon,
+    .tech-scanline,
+    .tech-particles {
+      display: none;
+    }
+
+    .tech-aurora {
+      opacity: 0.16;
+      filter: blur(70px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tech-grid,
+    .tech-aurora,
+    .tech-horizon-grid,
+    .tech-scanline,
+    .tech-particle {
+      animation: none;
+    }
+
+    .tech-scanlines,
+    .tech-particles,
+    .tech-scanline {
+      display: none;
+    }
+  }
+</style>

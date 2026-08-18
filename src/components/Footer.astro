@@ -20,9 +20,15 @@ const year = new Date().getFullYear();
 
 <style>
   .footer {
-    border-top: 1px solid var(--color-border);
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid transparent;
     padding: var(--space-xl) 0;
     margin-top: var(--space-3xl);
+    background:
+      linear-gradient(var(--color-bg), var(--color-bg)) padding-box,
+      linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.55), rgba(167, 139, 250, 0.45), transparent)
+        border-box;
   }
 
   .footer-inner {
