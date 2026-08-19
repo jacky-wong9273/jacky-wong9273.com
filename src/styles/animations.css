@@ -264,6 +264,148 @@
   }
 }
 
+@keyframes maat-tail-slow {
+  0%,
+  100% {
+    transform: rotate(-6deg);
+  }
+  50% {
+    transform: rotate(9deg);
+  }
+}
+
+@keyframes maat-breathe {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 3px;
+  }
+}
+
+@keyframes maat-stride-fore {
+  0%,
+  100% {
+    transform: rotate(12deg);
+  }
+  50% {
+    transform: rotate(-16deg) translateY(-3px);
+  }
+}
+
+@keyframes maat-stride-hind {
+  0%,
+  100% {
+    transform: rotate(-10deg);
+  }
+  50% {
+    transform: rotate(14deg) translateY(-2px);
+  }
+}
+
+@keyframes maat-body-gait {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes maat-bunny-kick {
+  0%,
+  100% {
+    transform: rotate(8deg);
+  }
+  50% {
+    transform: rotate(-22deg) translateY(2px);
+  }
+}
+
+@keyframes maat-chew {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(2px) rotate(-3deg);
+  }
+}
+
+@keyframes maat-pupil-slit {
+  0%,
+  100% {
+    scale: 0.72 1;
+  }
+  50% {
+    scale: 0.55 1.05;
+  }
+}
+
+@keyframes maat-pupil-wide {
+  0%,
+  100% {
+    scale: 1.15 0.82;
+  }
+  50% {
+    scale: 1.28 0.78;
+  }
+}
+
+@keyframes lure-mouse-scurry {
+  0%,
+  100% {
+    transform: rotate(-6deg) translateY(0);
+  }
+  50% {
+    transform: rotate(6deg) translateY(-2px);
+  }
+}
+
+@keyframes lure-food-swing {
+  0%,
+  100% {
+    transform: rotate(-8deg) translateY(0);
+  }
+  50% {
+    transform: rotate(10deg) translateY(-3px);
+  }
+}
+
+@keyframes lure-bonk {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  40% {
+    transform: rotate(-18deg) scale(1.06) translate(-2px, -3px);
+  }
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+}
+
+@keyframes lure-struggle {
+  0%,
+  100% {
+    transform: rotate(-12deg) scale(0.92);
+  }
+  50% {
+    transform: rotate(14deg) scale(1.04) translate(2px, -2px);
+  }
+}
+
+@keyframes lure-nibble {
+  0%,
+  100% {
+    transform: scale(1) rotate(-4deg);
+  }
+  50% {
+    transform: scale(0.86) rotate(6deg) translateY(2px);
+  }
+}
+
 @keyframes maat-blink {
   0%,
   90%,

@@ -115,9 +115,18 @@ html {
   -moz-osx-font-smoothing: grayscale;
 }
 
-html.has-mouse-toy,
-html.has-mouse-toy * {
+html.has-cat-lure,
+html.has-cat-lure * {
   cursor: none !important;
+}
+
+html.has-cat-lure .cat-context-menu,
+html.has-cat-lure .cat-context-menu * {
+  cursor: default !important;
+}
+
+html.has-cat-lure .cat-context-menu button {
+  cursor: pointer !important;
 }
 
 body {
