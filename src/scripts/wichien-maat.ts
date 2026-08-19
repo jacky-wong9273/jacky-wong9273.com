@@ -20,23 +20,24 @@ const IDLE_HOLD_MAX = 11000;
 const TOUCH_HOLD_MIN = 6200;
 const TOUCH_HOLD_MAX = 9000;
 const MOVE_EPSILON = 0.9;
-const JAM_RANGE = 78;
-const JAM_HOLD_MIN = 1100;
-const JAM_HOLD_MAX = 1900;
-const JAM_COOLDOWN = 3200;
+const JAM_RANGE = 104;
+const INTEREST_RANGE = 188;
+const JAM_HOLD_MIN = 1600;
+const JAM_HOLD_MAX = 2600;
+const JAM_COOLDOWN = 2400;
 const YANK_RELEASE = 240;
-const POUNCE_MS = 320;
-const CAT_W = 200;
-const CAT_H = 140;
+const POUNCE_MS = 280;
+const CAT_W = 248;
+const CAT_H = 172;
 
 type Point = { x: number; y: number };
 type LiveBehavior = Exclude<CatBehaviorId, 'auto'>;
 
 const ANCHORS: Record<CatPoseId, { head: Point; mouth: Point; origin: Point }> = {
-  side: { head: { x: 204, y: 72 }, mouth: { x: 232, y: 82 }, origin: { x: 130, y: 112 } },
-  sit: { head: { x: 118, y: 52 }, mouth: { x: 124, y: 70 }, origin: { x: 130, y: 118 } },
-  sleep: { head: { x: 132, y: 92 }, mouth: { x: 128, y: 102 }, origin: { x: 130, y: 112 } },
-  stretch: { head: { x: 58, y: 118 }, mouth: { x: 42, y: 126 }, origin: { x: 130, y: 122 } },
+  side: { head: { x: 214, y: 70 }, mouth: { x: 240, y: 84 }, origin: { x: 130, y: 118 } },
+  sit: { head: { x: 128, y: 52 }, mouth: { x: 128, y: 82 }, origin: { x: 130, y: 124 } },
+  sleep: { head: { x: 132, y: 90 }, mouth: { x: 128, y: 104 }, origin: { x: 130, y: 116 } },
+  stretch: { head: { x: 62, y: 118 }, mouth: { x: 46, y: 128 }, origin: { x: 130, y: 124 } },
 };
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
@@ -49,6 +50,8 @@ const pick = <T,>(items: readonly T[], except?: T) => {
 
 const hasFinePointer = () => window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const isMouseLike = (event: PointerEvent) =>
+  event.pointerType === 'mouse' || event.pointerType === 'pen' || event.pointerType === '';
 
 const readStoredMode = (): CatBehaviorId => {
   try {
@@ -207,6 +210,7 @@ export function initWichienMaat() {
   let yawnUntil = 0;
   let nextYawn = performance.now() + rand(8000, 16000);
   let lookHold = { x: 0, y: 0 };
+  let usingMouse = hasFinePointer();
 
   const applyBehaviorClass = (next: LiveBehavior) => {
     root.classList.remove('is-sleep', 'is-play', 'is-chase', 'is-toy', 'is-groom', 'is-stretch', 'is-loaf', 'is-excited');
@@ -233,7 +237,7 @@ export function initWichienMaat() {
     document.documentElement.dataset.catBehavior = next;
     if (persist) writeStored(CAT_STORAGE_KEY, next);
     if (next === 'auto') {
-      setBehavior(hasFinePointer() ? pick(IDLE_BEHAVIORS) : pick(TOUCH_ROTATION), rand(3200, 5200));
+      setBehavior(pointerIsFine() ? pick(IDLE_BEHAVIORS) : pick(TOUCH_ROTATION), rand(3200, 5200));
     } else {
       setBehavior(next, 1e9);
     }
@@ -248,8 +252,10 @@ export function initWichienMaat() {
     window.dispatchEvent(new CustomEvent('wichien:lure-live', { detail: { lure: next } }));
   };
 
+  const pointerIsFine = () => usingMouse || hasFinePointer();
+
   const syncPointerMode = () => {
-    const fine = hasFinePointer();
+    const fine = pointerIsFine();
     root.classList.toggle('is-touch', !fine);
     document.documentElement.classList.toggle('has-cat-lure', fine);
     lureEl.hidden = false;
@@ -293,7 +299,7 @@ export function initWichienMaat() {
       if (behavior !== mode) setBehavior(mode, 1e9);
       return;
     }
-    if (hasFinePointer()) decideAutoDesktop(now);
+    if (pointerIsFine()) decideAutoDesktop(now);
     else decideAutoTouch(now);
   };
 
@@ -372,7 +378,11 @@ export function initWichienMaat() {
     'pointermove',
     (event) => {
       if (event.pointerType === 'touch') return;
-      if (!hasFinePointer()) return;
+      if (isMouseLike(event) && !usingMouse) {
+        usingMouse = true;
+        syncPointerMode();
+      }
+      if (!pointerIsFine()) return;
       const dx = event.clientX - pointer.x;
       const dy = event.clientY - pointer.y;
       pointer.x = event.clientX;
@@ -414,7 +424,7 @@ export function initWichienMaat() {
   const tick = (now: number) => {
     const dt = clamp((now - lastFrame) / 1000, 0.008, 0.034);
     lastFrame = now;
-    const fine = hasFinePointer();
+    const fine = pointerIsFine();
 
     if (!fine) {
       pointer = virtualMouse(now);
@@ -479,8 +489,16 @@ export function initWichienMaat() {
       }
     } else if (behavior === 'play') {
       if (!jammed && !pouncing) {
-        if (Math.hypot(cat.x - wander.x, cat.y - wander.y) < 30) wander = wanderPoint();
-        catTarget = wander;
+        if (distance < INTEREST_RANGE && now >= jamCooldownUntil) {
+          catTarget = catFromLocal(
+            { x: lurePos.x - facing * 34, y: lurePos.y + 8 },
+            mouthAnchor,
+            facing,
+          );
+        } else {
+          if (Math.hypot(cat.x - wander.x, cat.y - wander.y) < 30) wander = wanderPoint();
+          catTarget = wander;
+        }
       }
     } else if (behavior === 'sleep' || behavior === 'loaf') {
       catTarget.x = lerp(catTarget.x, wander.x, 0.03);
