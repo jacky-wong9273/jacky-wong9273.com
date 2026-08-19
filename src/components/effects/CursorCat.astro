@@ -1,134 +1,295 @@
 ---
+import CatContextMenu from './CatContextMenu.astro';
 ---
 
-<div class="cursor-cat" id="cursor-cat" aria-hidden="true">
+<div class="cursor-cat" id="cursor-cat" aria-hidden="true" data-pose="sit" data-expr="neutral" data-lure="toy">
   <div class="cursor-cat-trail" id="cursor-cat-trail"></div>
 
   <div class="cursor-cat-wrap">
-    <div class="cat-zzz" aria-hidden="true">
+    <div class="cat-zzz">
       <span>z</span>
       <span>z</span>
       <span>Z</span>
     </div>
 
-    <svg class="cursor-cat-svg" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg class="cursor-cat-svg" viewBox="0 0 260 170" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <linearGradient id="maat-cream" x1="40" y1="40" x2="128" y2="148" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#fffaf0" />
-          <stop offset="0.55" stop-color="#ffe7b3" />
-          <stop offset="1" stop-color="#f3cf86" />
+        <linearGradient id="maat-ivory" x1="70" y1="60" x2="200" y2="160" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#fff6e4" />
+          <stop offset="0.42" stop-color="#ead4ae" />
+          <stop offset="1" stop-color="#c9a36f" />
         </linearGradient>
-        <linearGradient id="maat-seal" x1="48" y1="12" x2="112" y2="92" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#6b4226" />
-          <stop offset="0.5" stop-color="#3f2414" />
+        <linearGradient id="maat-ivory-sit" x1="80" y1="70" x2="190" y2="160" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#fff8ea" />
+          <stop offset="0.5" stop-color="#e6d0a6" />
+          <stop offset="1" stop-color="#c4a072" />
+        </linearGradient>
+        <linearGradient id="maat-seal" x1="80" y1="16" x2="160" y2="90" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#6b4328" />
+          <stop offset="0.55" stop-color="#3d2817" />
+          <stop offset="1" stop-color="#24150c" />
+        </linearGradient>
+        <linearGradient id="maat-mask" x1="100" y1="30" x2="150" y2="80" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#5a3820" />
+          <stop offset="1" stop-color="#2c1a10" />
+        </linearGradient>
+        <linearGradient id="maat-point-leg" x1="0" y1="0" x2="0" y2="1">
+          <stop stop-color="#c9a36f" />
+          <stop offset="0.35" stop-color="#8a5a34" />
           <stop offset="1" stop-color="#2a160c" />
         </linearGradient>
-        <linearGradient id="maat-mask" x1="80" y1="22" x2="80" y2="78" gradientUnits="userSpaceOnUse">
-          <stop stop-color="#4a2b18" />
-          <stop offset="1" stop-color="#2d190e" />
+        <linearGradient id="maat-eye" x1="0" y1="0" x2="0" y2="1">
+          <stop stop-color="#8fd4f5" />
+          <stop offset="0.45" stop-color="#2f7fbf" />
+          <stop offset="1" stop-color="#16324a" />
         </linearGradient>
-        <filter id="maat-soft" x="-20%" y="-20%" width="140%" height="140%">
-          <feDropShadow dx="0" dy="4" stdDeviation="3" flood-color="#2a160c" flood-opacity="0.28" />
+        <linearGradient id="maat-tail" x1="20" y1="20" x2="90" y2="120" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#2a160c" />
+          <stop offset="0.55" stop-color="#4a2d1a" />
+          <stop offset="1" stop-color="#8a5a34" />
+        </linearGradient>
+        <filter id="maat-soft" x="-18%" y="-18%" width="136%" height="136%">
+          <feDropShadow dx="0" dy="3" stdDeviation="2.4" flood-color="#1a1008" flood-opacity="0.28" />
+        </filter>
+        <filter id="maat-fur" x="-8%" y="-8%" width="116%" height="116%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="4" result="n" />
+          <feDisplacementMap in="SourceGraphic" in2="n" scale="1.1" xChannelSelector="R" yChannelSelector="G" />
         </filter>
       </defs>
 
-      <g class="cat-tail">
-        <path
-          d="M108 104 C138 98 150 74 140 54 C134 42 150 34 144 22"
-          stroke="url(#maat-seal)"
-          stroke-width="11"
-          stroke-linecap="round"
-        />
-        <path
-          d="M108 104 C138 98 150 74 140 54 C134 42 150 34 144 22"
-          stroke="#8a5a34"
-          stroke-width="4"
-          stroke-linecap="round"
-          opacity="0.35"
-        />
+      <!-- Side profile: walk, hunt, pounce, pin -->
+      <g class="cat-pose cat-pose--side">
+        <ellipse class="cat-ground" cx="138" cy="161" rx="74" ry="6.5" fill="#140c08" opacity="0.3" />
+
+        <g class="cat-tail">
+          <path d="M90 116 C58 110 34 86 32 56 C30 36 12 30 16 14" stroke="url(#maat-tail)" stroke-width="11" stroke-linecap="round" />
+          <path d="M90 116 C58 110 34 86 32 56 C30 36 12 30 16 14" stroke="#8a5a34" stroke-width="4.5" stroke-linecap="round" opacity="0.35" />
+        </g>
+
+        <g class="cat-leg cat-leg--hind-far">
+          <path d="M126 120 C120 134 116 146 118 156" stroke="#5a3a22" stroke-width="8" stroke-linecap="round" />
+          <ellipse cx="116" cy="157" rx="9" ry="4.4" fill="#24150c" />
+        </g>
+
+        <g class="cat-body" filter="url(#maat-soft)">
+          <path
+            d="M92 122 C86 96 104 70 138 68 C168 66 186 78 194 96 C200 110 196 124 184 132 C168 144 142 148 118 144 C100 140 94 132 92 122 Z"
+            fill="url(#maat-ivory)"
+            filter="url(#maat-fur)"
+          />
+          <path d="M116 128 C128 138 160 138 176 122 C170 134 148 142 126 140 C116 138 112 132 116 128 Z" fill="#fff6e4" opacity="0.62" />
+          <ellipse cx="172" cy="104" rx="22" ry="18" fill="#6b4328" opacity="0.16" />
+          <path d="M104 94 C124 80 154 78 180 92" stroke="#f3e2c2" stroke-width="2" opacity="0.35" />
+        </g>
+
+        <g class="cat-leg cat-leg--hind-near">
+          <path d="M150 122 C148 138 154 148 160 157" stroke="url(#maat-point-leg)" stroke-width="9" stroke-linecap="round" />
+          <ellipse cx="162" cy="158" rx="10" ry="4.6" fill="#24150c" />
+        </g>
+        <g class="cat-leg cat-leg--fore-far">
+          <path d="M168 116 C174 132 176 144 172 156" stroke="#5a3a22" stroke-width="7.4" stroke-linecap="round" />
+          <ellipse cx="170" cy="157" rx="8.4" ry="4.1" fill="#24150c" />
+        </g>
+        <g class="cat-leg cat-leg--fore-near">
+          <path d="M184 114 C186 132 180 146 176 157" stroke="url(#maat-point-leg)" stroke-width="8.6" stroke-linecap="round" />
+          <ellipse cx="174" cy="158" rx="10" ry="4.5" fill="#24150c" />
+        </g>
+
+        <g class="cat-head">
+          <path d="M176 98 C182 88 190 84 198 88 C190 104 182 110 174 110 Z" fill="url(#maat-ivory)" />
+          <path d="M198 60 L206 34 L216 62 Z" fill="#3a2414" />
+          <path
+            d="M186 94 C188 66 206 50 224 54 C238 58 246 70 244 84 C242 98 228 106 212 104 C196 102 186 100 186 94 Z"
+            fill="url(#maat-ivory)"
+          />
+          <path class="cat-ear cat-ear--near" d="M206 62 L216 26 L230 64 Z" fill="url(#maat-seal)" />
+          <path d="M212 60 L218 36 L226 62 Z" fill="#c99290" />
+          <path d="M202 58 C210 48 226 48 236 60 C242 68 242 80 236 88 C226 78 212 70 202 70 Z" fill="url(#maat-mask)" opacity="0.94" />
+          <ellipse cx="232" cy="88" rx="12" ry="9" fill="#fff3dc" />
+          <g class="cat-eye-open">
+            <path d="M216 70 C220 65.8 228 65.8 232 71 C228 76 220 76 216 70 Z" fill="#122334" />
+            <path d="M218 70 C221 67.4 227 67.4 230 71 C227 73.8 221 73.8 218 70 Z" fill="url(#maat-eye)" />
+            <ellipse class="cat-pupil" cx="224" cy="70.5" rx="1.45" ry="3.1" fill="#070b10" />
+            <circle cx="225.3" cy="69" r="0.85" fill="#eef8ff" />
+          </g>
+          <path class="cat-eye-shut" d="M216 71 C222 74.5 230 74.5 232 71" stroke="#3a2414" stroke-width="1.7" stroke-linecap="round" />
+          <ellipse cx="238" cy="84" rx="2.3" ry="1.6" fill="#a86a6c" />
+          <path class="cat-mouth-shut" d="M238 86 C236 90 232 90.5 229 87.5" stroke="#6d4038" stroke-width="1.1" stroke-linecap="round" />
+          <ellipse class="cat-mouth-eat" cx="236" cy="90" rx="4.2" ry="3.1" fill="#6b3034" />
+          <path d="M220 90 H198" stroke="#e8d5b8" stroke-width="1" opacity="0.72" />
+          <path d="M220 94 H194" stroke="#e8d5b8" stroke-width="0.85" opacity="0.42" />
+          <path d="M234 92 H252" stroke="#e8d5b8" stroke-width="0.95" opacity="0.5" />
+        </g>
       </g>
 
-      <g class="cat-body" filter="url(#maat-soft)">
-        <ellipse class="cat-haunch" cx="62" cy="118" rx="16" ry="14" fill="url(#maat-cream)" />
-        <ellipse cx="80" cy="108" rx="36" ry="28" fill="url(#maat-cream)" />
-        <ellipse cx="84" cy="112" rx="22" ry="16" fill="#fff8e8" opacity="0.7" />
-        <ellipse class="cat-hind-paw" cx="56" cy="132" rx="11" ry="8" fill="url(#maat-seal)" />
+      <!-- Sit / loaf / groom / watch -->
+      <g class="cat-pose cat-pose--sit">
+        <ellipse class="cat-ground" cx="130" cy="161" rx="62" ry="6.5" fill="#140c08" opacity="0.3" />
+        <g class="cat-tail">
+          <path d="M178 130 C206 124 220 98 210 74 C204 60 190 86 186 114" stroke="url(#maat-tail)" stroke-width="10" stroke-linecap="round" />
+        </g>
+        <g class="cat-body" filter="url(#maat-soft)">
+          <path
+            d="M74 134 C72 102 92 80 132 78 C174 76 200 98 202 128 C204 148 176 156 130 158 C86 160 76 148 74 134 Z"
+            fill="url(#maat-ivory-sit)"
+            filter="url(#maat-fur)"
+          />
+          <ellipse cx="132" cy="130" rx="40" ry="18" fill="#fff7e8" opacity="0.5" />
+          <ellipse cx="176" cy="126" rx="22" ry="18" fill="#5c3d26" opacity="0.18" />
+        </g>
+        <ellipse class="cat-paw" cx="108" cy="153" rx="14" ry="6.6" fill="#24150c" />
+        <ellipse class="cat-paw" cx="136" cy="154" rx="13" ry="6.2" fill="#24150c" />
+        <g class="cat-groom-arm">
+          <path d="M88 120 C70 104 68 82 86 70" stroke="#e6d0a6" stroke-width="9" stroke-linecap="round" />
+          <ellipse cx="88" cy="68" rx="7" ry="5.6" fill="#24150c" />
+        </g>
+        <g class="cat-head">
+          <path class="cat-ear cat-ear--l" d="M86 58 L76 16 L112 48 Z" fill="url(#maat-seal)" />
+          <path d="M90 54 L84 26 L108 48 Z" fill="#c99290" />
+          <path class="cat-ear cat-ear--r" d="M150 54 L168 14 L134 46 Z" fill="url(#maat-seal)" />
+          <path d="M148 52 L160 24 L136 46 Z" fill="#c99290" />
+          <path
+            d="M88 64 C86 40 102 26 122 24 C144 22 160 38 158 62 C156 82 140 92 122 92 C100 92 90 80 88 64 Z"
+            fill="url(#maat-ivory-sit)"
+          />
+          <path d="M94 48 C104 30 144 28 154 48 C158 60 150 72 138 76 C128 64 114 64 104 76 C94 68 90 58 94 48 Z" fill="url(#maat-mask)" />
+          <ellipse cx="122" cy="78" rx="16" ry="11.5" fill="#fff4e0" />
+          <g class="cat-eye-open">
+            <path d="M102 56 C106 50.5 116 50 120 56 C116 61 107 61.5 102 56 Z" fill="#122334" />
+            <path d="M104 56 C107 52.4 114 52 117.5 56 C114 59.2 107.5 59.6 104 56 Z" fill="url(#maat-eye)" />
+            <ellipse class="cat-pupil" cx="110.6" cy="55.8" rx="1.5" ry="3.4" fill="#070b10" />
+            <circle cx="112" cy="54.2" r="0.85" fill="#eef8ff" />
+            <path d="M130 54 C134 48.8 144 48.4 148 54.4 C144 59.4 135 60 130 54 Z" fill="#122334" />
+            <path d="M132 54 C135 50.8 142 50.4 145.4 54.4 C142 57.6 135.6 58 132 54 Z" fill="url(#maat-eye)" />
+            <ellipse class="cat-pupil" cx="138.6" cy="53.8" rx="1.5" ry="3.4" fill="#070b10" />
+            <circle cx="140" cy="52.2" r="0.85" fill="#eef8ff" />
+          </g>
+          <g class="cat-eye-shut">
+            <path d="M102 57 C108 61 118 61 120 57" stroke="#3a2414" stroke-width="1.8" stroke-linecap="round" />
+            <path d="M130 55 C136 59 146 59 148 55" stroke="#3a2414" stroke-width="1.8" stroke-linecap="round" />
+          </g>
+          <ellipse cx="122" cy="76" rx="3" ry="2.1" fill="#a86a6c" />
+          <path class="cat-mouth-shut" d="M122 79 C118 84 112 83 110 80" stroke="#6d4038" stroke-width="1.15" stroke-linecap="round" />
+          <path class="cat-mouth-shut" d="M122 79 C126 84 132 83 134 80" stroke="#6d4038" stroke-width="1.15" stroke-linecap="round" />
+          <ellipse class="cat-mouth-eat" cx="122" cy="84" rx="5" ry="3.4" fill="#6b3034" />
+          <path d="M104 80 H82" stroke="#e8d5b8" stroke-width="1" opacity="0.7" />
+          <path d="M104 84 H78" stroke="#e8d5b8" stroke-width="0.85" opacity="0.4" />
+          <path d="M140 80 H162" stroke="#e8d5b8" stroke-width="1" opacity="0.7" />
+          <path d="M140 84 H166" stroke="#e8d5b8" stroke-width="0.85" opacity="0.4" />
+        </g>
       </g>
 
-      <g class="cat-legs">
-        <g class="cat-paw cat-paw--l">
-          <rect x="58" y="112" width="13" height="24" rx="6.5" fill="url(#maat-cream)" />
-          <ellipse cx="64.5" cy="136" rx="8" ry="6.5" fill="url(#maat-seal)" />
+      <!-- Curled sleep -->
+      <g class="cat-pose cat-pose--sleep">
+        <ellipse class="cat-ground" cx="132" cy="160" rx="58" ry="6" fill="#140c08" opacity="0.28" />
+        <g class="cat-tail">
+          <path d="M150 118 C186 108 204 84 190 60 C176 40 148 70 146 96" stroke="url(#maat-tail)" stroke-width="12" stroke-linecap="round" />
         </g>
-        <g class="cat-paw cat-paw--r">
-          <rect x="90" y="112" width="13" height="24" rx="6.5" fill="url(#maat-cream)" />
-          <ellipse cx="96.5" cy="136" rx="8" ry="6.5" fill="url(#maat-seal)" />
+        <g class="cat-body" filter="url(#maat-soft)">
+          <path
+            d="M86 128 C78 96 100 70 138 68 C176 66 204 92 198 124 C194 150 160 158 128 154 C100 150 90 142 86 128 Z"
+            fill="url(#maat-ivory)"
+            filter="url(#maat-fur)"
+          />
+          <ellipse cx="140" cy="118" rx="34" ry="22" fill="#fff6e4" opacity="0.45" />
         </g>
-        <g class="cat-groom-paw">
-          <rect x="46" y="86" width="12" height="22" rx="6" fill="url(#maat-cream)" />
-          <ellipse cx="52" cy="108" rx="7.5" ry="6" fill="url(#maat-seal)" />
+        <g class="cat-head">
+          <path class="cat-ear cat-ear--l" d="M108 86 L98 56 L124 80 Z" fill="url(#maat-seal)" />
+          <path class="cat-ear cat-ear--r" d="M148 82 L164 54 L136 78 Z" fill="url(#maat-seal)" />
+          <ellipse cx="132" cy="100" rx="28" ry="22" fill="url(#maat-ivory-sit)" />
+          <path d="M110 90 C118 76 148 74 156 90 C158 100 148 108 132 108 C116 108 108 100 110 90 Z" fill="url(#maat-mask)" opacity="0.88" />
+          <g class="cat-eye-shut">
+            <path d="M116 98 C122 102 128 102 132 98" stroke="#3a2414" stroke-width="1.8" stroke-linecap="round" />
+            <path d="M136 97 C142 101 148 101 152 97" stroke="#3a2414" stroke-width="1.8" stroke-linecap="round" />
+          </g>
+          <ellipse cx="132" cy="106" rx="2.4" ry="1.7" fill="#a86a6c" />
+          <path d="M118 108 C124 114 140 114 146 108" stroke="#6d4038" stroke-width="1.1" stroke-linecap="round" />
         </g>
       </g>
 
-      <g class="cat-head" filter="url(#maat-soft)">
-        <path class="cat-ear cat-ear--l" d="M54 50 L40 14 L76 40 Z" fill="url(#maat-seal)" />
-        <path d="M54 44 L48 24 L68 40 Z" fill="#f4a6c1" />
-        <path class="cat-ear cat-ear--r" d="M106 50 L120 14 L84 40 Z" fill="url(#maat-seal)" />
-        <path d="M106 44 L112 24 L92 40 Z" fill="#f4a6c1" />
-
-        <circle cx="80" cy="64" r="32" fill="url(#maat-cream)" />
-        <path
-          class="cat-mask"
-          d="M52 46 Q48 30 62 26 Q80 18 98 26 Q112 30 108 46 Q104 60 96 66 Q80 54 64 66 Q56 60 52 46 Z"
-          fill="url(#maat-mask)"
-        />
-        <ellipse cx="80" cy="78" rx="16" ry="13" fill="#fff6e4" />
-
-        <g class="cat-eyes cat-eyes--open">
-          <ellipse class="cat-eye" cx="67" cy="64" rx="7.2" ry="8.4" fill="#5ec8f5" />
-          <ellipse class="cat-eye" cx="93" cy="64" rx="7.2" ry="8.4" fill="#5ec8f5" />
-          <ellipse cx="67" cy="64" rx="2.4" ry="5.6" fill="#102033" />
-          <ellipse cx="93" cy="64" rx="2.4" ry="5.6" fill="#102033" />
-          <circle cx="69.2" cy="61.2" r="1.5" fill="#f0fbff" />
-          <circle cx="95.2" cy="61.2" r="1.5" fill="#f0fbff" />
+      <!-- Morning stretch -->
+      <g class="cat-pose cat-pose--stretch">
+        <ellipse class="cat-ground" cx="128" cy="161" rx="86" ry="6" fill="#140c08" opacity="0.26" />
+        <g class="cat-tail">
+          <path d="M196 96 C222 80 236 52 228 28" stroke="url(#maat-tail)" stroke-width="10" stroke-linecap="round" />
         </g>
-        <g class="cat-eyes cat-eyes--shut">
-          <path d="M60 66 Q67 70 74 66" stroke="#2a160c" stroke-width="2.4" stroke-linecap="round" />
-          <path d="M86 66 Q93 70 100 66" stroke="#2a160c" stroke-width="2.4" stroke-linecap="round" />
+        <g class="cat-leg cat-leg--hind-far">
+          <path d="M176 118 C184 134 190 146 188 156" stroke="#5a3a22" stroke-width="8" stroke-linecap="round" />
+          <ellipse cx="186" cy="157" rx="9" ry="4.2" fill="#24150c" />
         </g>
-
-        <ellipse cx="80" cy="76" rx="3.3" ry="2.3" fill="#e879a9" />
-        <path class="cat-smile" d="M80 79 Q74 86 67 81" stroke="#7a4a2a" stroke-width="1.5" stroke-linecap="round" />
-        <path class="cat-smile" d="M80 79 Q86 86 93 81" stroke="#7a4a2a" stroke-width="1.5" stroke-linecap="round" />
-
-        <path d="M58 78 H36" stroke="#d8b48a" stroke-width="1.2" opacity="0.8" />
-        <path d="M58 82 H34" stroke="#d8b48a" stroke-width="1.2" opacity="0.55" />
-        <path d="M102 78 H124" stroke="#d8b48a" stroke-width="1.2" opacity="0.8" />
-        <path d="M102 82 H126" stroke="#d8b48a" stroke-width="1.2" opacity="0.55" />
+        <g class="cat-body" filter="url(#maat-soft)">
+          <path
+            d="M58 128 C70 110 110 92 150 86 C176 82 194 90 200 108 C206 124 196 136 176 140 C140 148 96 150 70 144 C56 140 52 134 58 128 Z"
+            fill="url(#maat-ivory)"
+          />
+          <path d="M80 136 C110 144 150 140 176 128" stroke="#fff6e4" stroke-width="6" opacity="0.35" />
+        </g>
+        <g class="cat-leg cat-leg--hind-near">
+          <path d="M168 122 C166 138 170 148 176 157" stroke="url(#maat-point-leg)" stroke-width="9" stroke-linecap="round" />
+          <ellipse cx="178" cy="158" rx="10" ry="4.4" fill="#24150c" />
+        </g>
+        <g class="cat-leg cat-leg--fore-near">
+          <path d="M70 128 C54 138 40 148 34 156" stroke="url(#maat-point-leg)" stroke-width="8" stroke-linecap="round" />
+          <ellipse cx="32" cy="157" rx="11" ry="4.6" fill="#24150c" />
+        </g>
+        <g class="cat-leg cat-leg--fore-far">
+          <path d="M80 130 C68 140 58 150 54 156" stroke="#5a3a22" stroke-width="7" stroke-linecap="round" />
+          <ellipse cx="52" cy="157" rx="9" ry="4.2" fill="#24150c" />
+        </g>
+        <g class="cat-head">
+          <path class="cat-ear cat-ear--l" d="M60 118 L50 90 L74 114 Z" fill="url(#maat-seal)" />
+          <path class="cat-ear cat-ear--r" d="M86 114 L102 88 L78 112 Z" fill="url(#maat-seal)" />
+          <ellipse cx="72" cy="124" rx="22" ry="16" fill="url(#maat-ivory-sit)" />
+          <path d="M56 118 C64 108 86 106 92 118 C90 126 80 130 72 130 C62 130 54 124 56 118 Z" fill="url(#maat-mask)" opacity="0.9" />
+          <g class="cat-eye-open">
+            <path d="M60 122 C64 119 70 119 74 122" stroke="#2f7fbf" stroke-width="2.2" stroke-linecap="round" />
+            <path d="M78 121 C82 118 88 118 92 121" stroke="#2f7fbf" stroke-width="2.2" stroke-linecap="round" />
+          </g>
+          <ellipse cx="70" cy="128" rx="2.1" ry="1.5" fill="#a86a6c" />
+        </g>
       </g>
     </svg>
   </div>
 </div>
 
-<div class="mouse-toy" id="mouse-toy" aria-hidden="true">
-  <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M30 30 C40 24 44 16 41 10" stroke="#e879a9" stroke-width="2.2" stroke-linecap="round" />
-    <circle cx="40.5" cy="9.5" r="2" fill="#f9a8d4" />
-    <ellipse cx="18" cy="26" rx="13" ry="10" fill="#d4d0dc" />
-    <ellipse cx="20" cy="27" rx="8" ry="6" fill="#eeeaf3" />
-    <circle cx="10" cy="18" r="5.2" fill="#c8c3d0" />
-    <circle cx="18" cy="16" r="4.6" fill="#c8c3d0" />
-    <circle cx="10" cy="18" r="2.6" fill="#f8b4cb" />
-    <circle cx="18" cy="16" r="2.2" fill="#f8b4cb" />
-    <circle cx="13" cy="25" r="1.15" fill="#2a160c" />
-    <circle cx="19" cy="24.4" r="1.15" fill="#2a160c" />
-    <circle cx="15.6" cy="28.2" r="1.5" fill="#f472b6" />
-    <path d="M14 30 Q16 32 19 30" stroke="#7a4a2a" stroke-width="1.1" stroke-linecap="round" />
-    <path d="M8 32 L6 36" stroke="#b8b2c0" stroke-width="1.4" stroke-linecap="round" />
-    <path d="M14 34 L13 38" stroke="#b8b2c0" stroke-width="1.4" stroke-linecap="round" />
-    <path d="M22 33 L23 37" stroke="#b8b2c0" stroke-width="1.4" stroke-linecap="round" />
+<div class="cat-lure" id="cat-lure" data-lure="toy" aria-hidden="true">
+  <svg class="lure-svg lure-svg--toy" viewBox="0 0 56 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M36 24 C48 20 54 12 50 6" stroke="#b9a089" stroke-width="2" stroke-linecap="round" />
+    <circle cx="50" cy="6" r="1.6" fill="#c9a48a" />
+    <ellipse cx="22" cy="23" rx="15" ry="10.5" fill="#9a9086" />
+    <ellipse cx="24" cy="24" rx="9" ry="6.5" fill="#c4bbb2" />
+    <ellipse cx="11" cy="16" rx="6.2" ry="5.4" fill="#8d847b" />
+    <ellipse cx="12" cy="15.2" rx="3.4" ry="3" fill="#e7b8b0" opacity="0.85" />
+    <ellipse cx="20" cy="13.5" rx="5.4" ry="4.6" fill="#8d847b" />
+    <ellipse cx="20.4" cy="13" rx="2.8" ry="2.4" fill="#e7b8b0" opacity="0.8" />
+    <circle cx="14.6" cy="22.2" r="1.15" fill="#1a1410" />
+    <circle cx="15.2" cy="21.6" r="0.35" fill="#f3f7ff" />
+    <ellipse cx="8.4" cy="23.6" rx="1.7" ry="1.25" fill="#d08a86" />
+    <path d="M8 20 H1" stroke="#d9cbb8" stroke-width="0.8" opacity="0.75" />
+    <path d="M8 23 H0" stroke="#d9cbb8" stroke-width="0.75" opacity="0.45" />
+    <path d="M18 20 H28" stroke="#d9cbb8" stroke-width="0.7" opacity="0.35" />
+    <path d="M12 29 L9 35" stroke="#7d746c" stroke-width="1.5" stroke-linecap="round" />
+    <path d="M20 30 L20 36" stroke="#7d746c" stroke-width="1.5" stroke-linecap="round" />
+    <path d="M28 29 L31 34" stroke="#7d746c" stroke-width="1.5" stroke-linecap="round" />
+  </svg>
+
+  <svg class="lure-svg lure-svg--food" viewBox="0 0 58 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M50 17 L57 8 L54 17 L57 26 Z" fill="#c47b3a" />
+    <ellipse cx="28" cy="17" rx="22" ry="10" fill="#d8a25a" />
+    <ellipse cx="24" cy="16" rx="16" ry="7" fill="#f0c888" />
+    <path d="M12 17 C18 12 30 11 40 16" stroke="#f6e2b8" stroke-width="1.6" opacity="0.7" />
+    <path d="M18 12 C24 8 34 8 42 13" stroke="#b77936" stroke-width="1.1" />
+    <path d="M20 23 C28 26 38 25 44 21" stroke="#b77936" stroke-width="1" opacity="0.7" />
+    <path d="M14 10 L18 14" stroke="#c47b3a" stroke-width="1.2" stroke-linecap="round" />
+    <path d="M22 8 L24 13" stroke="#c47b3a" stroke-width="1.2" stroke-linecap="round" />
+    <circle cx="12" cy="16.5" r="2.1" fill="#1d2430" />
+    <circle cx="12.6" cy="15.8" r="0.55" fill="#f6f0de" />
+    <path d="M16 14 C18 17 18 20 16 22" stroke="#a86a32" stroke-width="1" />
+    <ellipse cx="8" cy="17" rx="3.2" ry="2.4" fill="#e7b36a" />
   </svg>
 </div>
+
+<CatContextMenu />
 
 <style>
   .cursor-cat {
@@ -148,23 +309,36 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 124px;
-    height: 124px;
+    width: 200px;
+    height: 140px;
     will-change: transform;
     transform-origin: 50% 70%;
   }
 
   .cursor-cat-svg {
-    width: 124px;
-    height: 124px;
+    width: 200px;
+    height: 140px;
     overflow: visible;
-    filter: drop-shadow(0 8px 14px rgba(42, 22, 12, 0.28));
+    filter: drop-shadow(0 10px 12px rgba(20, 12, 8, 0.32));
+  }
+
+  .cat-pose {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .cursor-cat[data-pose='side'] .cat-pose--side,
+  .cursor-cat[data-pose='sit'] .cat-pose--sit,
+  .cursor-cat[data-pose='sleep'] .cat-pose--sleep,
+  .cursor-cat[data-pose='stretch'] .cat-pose--stretch {
+    opacity: 1;
+    visibility: visible;
   }
 
   .cat-zzz {
     position: absolute;
-    top: 6px;
-    right: 10px;
+    top: 4px;
+    right: 28px;
     display: flex;
     gap: 2px;
     opacity: 0;
@@ -172,192 +346,229 @@
     font-weight: 700;
     color: #fde68a;
     text-shadow: 0 0 8px rgba(251, 191, 36, 0.45);
-    pointer-events: none;
   }
 
   .cat-zzz span {
-    animation: maat-zzz 2.2s ease-in-out infinite;
+    animation: maat-zzz 2.6s ease-in-out infinite;
   }
 
   .cat-zzz span:nth-child(2) {
-    animation-delay: 0.25s;
+    animation-delay: 0.28s;
     font-size: 0.85em;
   }
 
   .cat-zzz span:nth-child(3) {
-    animation-delay: 0.5s;
+    animation-delay: 0.55s;
     font-size: 1.15em;
   }
 
   .cat-tail {
-    transform-origin: 108px 104px;
-    animation: maat-tail 1.9s ease-in-out infinite;
+    transform-box: fill-box;
+    transform-origin: left center;
+    animation: maat-tail-slow 3.4s ease-in-out infinite;
   }
 
-  .cat-ear--l {
-    transform-origin: 58px 42px;
-    animation: maat-ear 5.2s ease-in-out infinite;
+  .cat-pose--side .cat-tail {
+    transform-origin: 90px 116px;
+  }
+
+  .cat-ear--l,
+  .cat-ear--near,
+  .cat-ear--r {
+    transform-box: fill-box;
+    transform-origin: bottom center;
+    animation: maat-ear 6.4s ease-in-out infinite;
   }
 
   .cat-ear--r {
-    transform-origin: 102px 42px;
-    animation: maat-ear 5.2s ease-in-out 0.35s infinite;
+    animation-delay: 0.45s;
   }
 
-  .cat-eyes--open {
-    transform-origin: 80px 64px;
-    animation: maat-blink 5s ease-in-out infinite;
+  .cat-head {
+    transform-box: fill-box;
+    transform-origin: 70% 60%;
   }
 
-  .cat-eyes--shut {
+  .cat-eye-shut,
+  .cat-mouth-eat {
     opacity: 0;
   }
 
-  .cat-groom-paw {
+  .cat-groom-arm {
     opacity: 0;
-    transform-origin: 52px 90px;
   }
 
-  .cursor-cat-wrap {
-    animation: maat-bob 2.8s ease-in-out infinite;
-  }
-
-  .cursor-cat.is-sleep .cursor-cat-wrap {
-    animation: maat-sleep-breathe 3.4s ease-in-out infinite;
-  }
-
-  .cursor-cat.is-sleep .cat-eyes--open,
-  .cursor-cat.is-groom .cat-eyes--open {
+  .cursor-cat[data-expr='shut'] .cat-eye-open,
+  .cursor-cat.is-yawning .cat-pose--sit .cat-eye-open {
     opacity: 0;
-    animation: none;
   }
 
-  .cursor-cat.is-sleep .cat-eyes--shut,
-  .cursor-cat.is-groom .cat-eyes--shut {
+  .cursor-cat[data-expr='shut'] .cat-eye-shut,
+  .cursor-cat.is-yawning .cat-pose--sit .cat-eye-shut {
     opacity: 1;
+  }
+
+  .cursor-cat[data-expr='eat'] .cat-mouth-shut {
+    opacity: 0;
+  }
+
+  .cursor-cat[data-expr='eat'] .cat-mouth-eat {
+    opacity: 1;
+  }
+
+  .cursor-cat[data-expr='sleepy'] .cat-pupil,
+  .cursor-cat[data-expr='neutral'] .cat-pupil {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: maat-pupil-slit 8s ease-in-out infinite;
+  }
+
+  .cursor-cat[data-expr='focused'] .cat-pupil,
+  .cursor-cat[data-expr='happy'] .cat-pupil,
+  .cursor-cat[data-expr='eat'] .cat-pupil {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: maat-pupil-wide 1.8s ease-in-out infinite;
+  }
+
+  .cursor-cat[data-expr='alert'] .cat-ear--l,
+  .cursor-cat[data-expr='focused'] .cat-ear--l,
+  .cursor-cat[data-expr='alert'] .cat-ear--near,
+  .cursor-cat[data-expr='focused'] .cat-ear--near {
+    transform: rotate(-10deg);
   }
 
   .cursor-cat.is-sleep .cat-zzz {
     opacity: 1;
   }
 
-  .cursor-cat.is-sleep .cat-tail {
-    animation-duration: 3.6s;
+  .cursor-cat.is-sleep .cat-tail,
+  .cursor-cat.is-loaf .cat-tail {
+    animation-duration: 4.6s;
   }
 
-  .cursor-cat.is-sleep .cursor-cat-svg {
-    transform: rotate(-16deg) translateY(8px);
-  }
-
-  .cursor-cat.is-play .cursor-cat-wrap {
-    animation: maat-play-hop 0.7s ease-in-out infinite;
-  }
-
-  .cursor-cat.is-play .cat-paw--l,
-  .cursor-cat.is-toy .cat-paw--l {
-    transform-origin: 64px 114px;
-    animation: maat-paw-bat 0.42s ease-in-out infinite;
-  }
-
-  .cursor-cat.is-chase .cursor-cat-wrap {
-    animation: maat-chase-run 0.36s ease-in-out infinite;
-  }
-
-  .cursor-cat.is-chase .cat-body {
-    transform-origin: 80px 108px;
-    transform: scaleX(1.08) scaleY(0.92);
-  }
-
-  .cursor-cat.is-chase .cat-ear--l,
-  .cursor-cat.is-chase .cat-ear--r {
-    transform: rotate(-18deg);
-    animation: none;
-  }
-
-  .cursor-cat.is-excited .cat-tail {
-    animation-duration: 0.45s;
-  }
-
-  .cursor-cat.is-toy .cursor-cat-wrap {
-    animation: maat-toy-wiggle 0.55s ease-in-out infinite;
-  }
-
-  .cursor-cat.is-groom .cat-groom-paw {
+  .cursor-cat.is-groom .cat-groom-arm {
     opacity: 1;
-    animation: maat-groom 1.4s ease-in-out infinite;
-  }
-
-  .cursor-cat.is-groom .cat-paw--l {
-    opacity: 0;
+    transform-origin: 88px 118px;
+    animation: maat-groom 1.8s ease-in-out infinite;
   }
 
   .cursor-cat.is-groom .cat-head {
-    transform-origin: 80px 64px;
-    animation: maat-groom-head 1.4s ease-in-out infinite;
+    animation: maat-groom-head 1.8s ease-in-out infinite;
   }
 
-  .cursor-cat.is-stretch .cat-body {
-    transform-origin: 80px 116px;
-    animation: maat-stretch 2.2s ease-in-out infinite;
+  .cursor-cat.is-moving[data-pose='side'] .cat-leg--fore-near {
+    transform-origin: 184px 114px;
+    animation: maat-stride-fore var(--gait, 0.7s) ease-in-out infinite;
   }
 
-  .cursor-cat.is-stretch .cat-head {
-    transform: translate(-8px, 10px);
+  .cursor-cat.is-moving[data-pose='side'] .cat-leg--fore-far {
+    transform-origin: 168px 116px;
+    animation: maat-stride-fore var(--gait, 0.7s) ease-in-out infinite reverse;
   }
 
-  .cursor-cat.is-stretch .cat-tail {
-    animation-duration: 2.4s;
+  .cursor-cat.is-moving[data-pose='side'] .cat-leg--hind-near {
+    transform-origin: 150px 122px;
+    animation: maat-stride-hind var(--gait, 0.7s) ease-in-out infinite reverse;
   }
 
-  .cursor-cat.is-loaf .cat-paw--l,
-  .cursor-cat.is-loaf .cat-paw--r,
-  .cursor-cat.is-loaf .cat-hind-paw {
-    transform: translateY(-8px) scaleY(0.55);
+  .cursor-cat.is-moving[data-pose='side'] .cat-leg--hind-far {
+    transform-origin: 126px 120px;
+    animation: maat-stride-hind var(--gait, 0.7s) ease-in-out infinite;
   }
 
-  .cursor-cat.is-loaf .cat-body {
-    transform: scaleY(0.92) translateY(6px);
+  .cursor-cat.is-moving[data-pose='side'] .cat-body {
+    transform-origin: 140px 110px;
+    animation: maat-body-gait var(--gait, 0.7s) ease-in-out infinite;
   }
 
-  .cursor-cat.is-loaf .cursor-cat-wrap {
-    animation: maat-sleep-breathe 4s ease-in-out infinite;
+  .cursor-cat.is-pouncing[data-pose='side'] .cat-body {
+    transform-origin: 140px 120px;
+    transform: scaleX(1.08) scaleY(0.9) translateY(4px);
+    animation: none;
   }
 
-  .mouse-toy {
+  .cursor-cat.is-pouncing .cat-leg--hind-near,
+  .cursor-cat.is-pouncing .cat-leg--hind-far {
+    transform: rotate(16deg);
+    animation: none;
+  }
+
+  .cursor-cat.is-jamming[data-lure='toy'] .cat-leg--hind-near,
+  .cursor-cat.is-jamming[data-lure='toy'] .cat-leg--hind-far {
+    transform-origin: 150px 122px;
+    animation: maat-bunny-kick 0.28s ease-in-out infinite;
+  }
+
+  .cursor-cat.is-jamming[data-lure='food'] .cat-head,
+  .cursor-cat.is-toy[data-lure='food'] .cat-head {
+    animation: maat-chew 0.34s ease-in-out infinite;
+  }
+
+  .cursor-cat.is-loaf .cursor-cat-wrap,
+  .cursor-cat.is-sleep .cursor-cat-wrap {
+    animation: maat-breathe 4.2s ease-in-out infinite;
+  }
+
+  .cursor-cat.is-excited .cat-tail {
+    animation-duration: 1.15s;
+  }
+
+  .cat-lure {
     position: fixed;
     top: 0;
     left: 0;
-    width: 42px;
-    height: 42px;
-    margin: -10px 0 0 -8px;
+    width: 48px;
+    height: 36px;
+    margin: -12px 0 0 -10px;
     will-change: transform;
     z-index: 130;
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.25s ease;
-    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.35));
+    filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.38));
   }
 
-  .mouse-toy.is-visible {
+  .cat-lure.is-visible {
     opacity: 1;
   }
 
-  .mouse-toy[hidden] {
+  .cat-lure[hidden] {
     display: none;
   }
 
-  .mouse-toy svg {
-    width: 42px;
-    height: 42px;
+  .lure-svg {
+    position: absolute;
+    inset: 0;
+    width: 48px;
+    height: 36px;
     overflow: visible;
+    opacity: 0;
   }
 
-  .mouse-toy.is-running svg {
-    animation: mouse-toy-scurry 0.28s ease-in-out infinite;
+  .cat-lure[data-lure='toy'] .lure-svg--toy,
+  .cat-lure[data-lure='food'] .lure-svg--food {
+    opacity: 1;
   }
 
-  .mouse-toy.is-batted svg {
-    animation: mouse-toy-bonk 0.28s ease-out;
+  .cat-lure.is-running[data-lure='toy'] .lure-svg--toy {
+    animation: lure-mouse-scurry 0.4s ease-in-out infinite;
+  }
+
+  .cat-lure.is-running[data-lure='food'] .lure-svg--food {
+    animation: lure-food-swing 0.55s ease-in-out infinite;
+  }
+
+  .cat-lure.is-batted .lure-svg {
+    animation: lure-bonk 0.32s ease-out;
+  }
+
+  .cat-lure.is-jammed[data-lure='toy'] .lure-svg--toy {
+    animation: lure-struggle 0.22s ease-in-out infinite;
+  }
+
+  .cat-lure.is-jammed[data-lure='food'] .lure-svg--food {
+    animation: lure-nibble 0.28s ease-in-out infinite;
   }
 
   .cursor-cat-trail {
@@ -368,14 +579,14 @@
   @media (max-width: 768px) {
     .cursor-cat-wrap,
     .cursor-cat-svg {
-      width: 104px;
-      height: 104px;
+      width: 168px;
+      height: 118px;
     }
 
-    .mouse-toy,
-    .mouse-toy svg {
-      width: 34px;
-      height: 34px;
+    .cat-lure,
+    .lure-svg {
+      width: 40px;
+      height: 30px;
     }
   }
 
@@ -384,8 +595,12 @@
     .cat-tail,
     .cat-ear--l,
     .cat-ear--r,
-    .cat-eyes--open,
-    .mouse-toy svg {
+    .cat-ear--near,
+    .cat-leg--fore-near,
+    .cat-leg--fore-far,
+    .cat-leg--hind-near,
+    .cat-leg--hind-far,
+    .lure-svg {
       animation: none !important;
     }
   }

@@ -1,0 +1,258 @@
+---
+import { CAT_BEHAVIORS, CAT_LURES } from '../../lib/cat-behaviors';
+---
+
+<div
+  class="cat-context-menu"
+  id="cat-context-menu"
+  hidden
+  role="menu"
+  aria-label="Wichien Maat controls"
+>
+  <p class="cat-context-kicker">Wichien Maat</p>
+  <p class="cat-context-title">Behaviour</p>
+  {CAT_BEHAVIORS.map((item) => (
+    <button
+      type="button"
+      class="cat-context-option"
+      role="menuitemradio"
+      data-cat-behavior={item.id}
+      aria-checked={item.id === 'auto' ? 'true' : 'false'}
+    >
+      <span class="cat-context-option-label">{item.label}</span>
+      <span class="cat-context-option-hint">{item.hint}</span>
+    </button>
+  ))}
+  <p class="cat-context-title cat-context-title--lure">Cursor</p>
+  {CAT_LURES.map((item) => (
+    <button
+      type="button"
+      class="cat-context-option"
+      role="menuitemradio"
+      data-cat-lure={item.id}
+      aria-checked={item.id === 'toy' ? 'true' : 'false'}
+    >
+      <span class="cat-context-option-label">{item.label}</span>
+      <span class="cat-context-option-hint">{item.hint}</span>
+    </button>
+  ))}
+  <p class="cat-context-foot">Shift + right-click for the browser menu</p>
+</div>
+
+<style>
+  .cat-context-menu {
+    position: fixed;
+    z-index: 240;
+    width: min(272px, calc(100vw - 1.25rem));
+    max-height: calc(100vh - 1.25rem);
+    overflow: auto;
+    padding: 0.7rem 0.6rem 0.55rem;
+    border-radius: var(--radius-lg);
+    background: rgba(5, 8, 20, 0.96);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-lg), var(--shadow-glow);
+    backdrop-filter: blur(18px);
+    overscroll-behavior: contain;
+  }
+
+  .cat-context-menu[hidden] {
+    display: none;
+  }
+
+  .cat-context-kicker {
+    margin: 0 0 0.55rem;
+    padding: 0 0.4rem 0.45rem;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text-heading);
+    font-family: var(--font-display);
+    font-size: 0.84rem;
+    letter-spacing: 0.02em;
+  }
+
+  .cat-context-title {
+    margin: 0.15rem 0 0.2rem;
+    padding: 0 0.4rem;
+    color: var(--color-text-muted);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .cat-context-title--lure {
+    margin-top: 0.65rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .cat-context-option {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.08rem;
+    width: 100%;
+    margin: 0;
+    padding: 0.42rem 0.5rem;
+    border: 0;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--color-text);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .cat-context-option:hover,
+  .cat-context-option[aria-checked='true'] {
+    background: rgba(56, 189, 248, 0.12);
+  }
+
+  .cat-context-option[aria-checked='true'] .cat-context-option-label {
+    color: var(--color-accent);
+  }
+
+  .cat-context-option-label {
+    font-size: 0.88rem;
+    font-weight: 600;
+  }
+
+  .cat-context-option-hint {
+    color: var(--color-text-muted);
+    font-size: 0.72rem;
+    line-height: 1.35;
+  }
+
+  .cat-context-foot {
+    margin: 0.55rem 0 0;
+    padding: 0.45rem 0.4rem 0.1rem;
+    border-top: 1px solid var(--color-border);
+    color: var(--color-text-muted);
+    font-size: 0.68rem;
+    line-height: 1.4;
+  }
+</style>
+
+<script>
+  import {
+    CAT_BEHAVIOR_EVENT,
+    CAT_LURE_EVENT,
+    CAT_LURE_KEY,
+    CAT_STORAGE_KEY,
+    isCatBehaviorId,
+    isCatLureId,
+    type CatBehaviorId,
+    type CatLureId,
+  } from '../../lib/cat-behaviors';
+
+  const menu = document.getElementById('cat-context-menu');
+  const behaviorOptions = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-cat-behavior]'));
+  const lureOptions = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-cat-lure]'));
+
+  const readMode = (): CatBehaviorId => {
+    try {
+      const stored = localStorage.getItem(CAT_STORAGE_KEY);
+      if (isCatBehaviorId(stored)) return stored;
+    } catch {
+      /* ignore */
+    }
+    return 'auto';
+  };
+
+  const readLure = (): CatLureId => {
+    try {
+      const stored = localStorage.getItem(CAT_LURE_KEY);
+      if (isCatLureId(stored)) return stored;
+    } catch {
+      /* ignore */
+    }
+    return 'toy';
+  };
+
+  const paint = (mode = readMode(), lure = readLure()) => {
+    behaviorOptions.forEach((option) => {
+      option.setAttribute('aria-checked', String(option.dataset.catBehavior === mode));
+    });
+    lureOptions.forEach((option) => {
+      option.setAttribute('aria-checked', String(option.dataset.catLure === lure));
+    });
+  };
+
+  const place = (clientX: number, clientY: number) => {
+    if (!menu) return;
+    menu.hidden = false;
+    menu.style.left = `${clientX}px`;
+    menu.style.top = `${clientY}px`;
+    const rect = menu.getBoundingClientRect();
+    const pad = 8;
+    const left = clamp(clientX, pad, window.innerWidth - rect.width - pad);
+    const top = clamp(clientY, pad, window.innerHeight - rect.height - pad);
+    menu.style.left = `${left}px`;
+    menu.style.top = `${top}px`;
+  };
+
+  const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
+
+  const close = () => {
+    if (menu) menu.hidden = true;
+  };
+
+  const isEditable = (target: EventTarget | null) => {
+    if (!(target instanceof Element)) return false;
+    return Boolean(target.closest('input, textarea, select, [contenteditable="true"]'));
+  };
+
+  paint();
+
+  document.addEventListener('contextmenu', (event) => {
+    if (event.shiftKey || isEditable(event.target)) return;
+    event.preventDefault();
+    place(event.clientX, event.clientY);
+  });
+
+  behaviorOptions.forEach((option) => {
+    option.addEventListener('click', () => {
+      const next = option.dataset.catBehavior;
+      if (!isCatBehaviorId(next)) return;
+      window.dispatchEvent(new CustomEvent(CAT_BEHAVIOR_EVENT, { detail: { behavior: next } }));
+      paint(next, readLure());
+      close();
+    });
+  });
+
+  lureOptions.forEach((option) => {
+    option.addEventListener('click', () => {
+      const next = option.dataset.catLure;
+      if (!isCatLureId(next)) return;
+      window.dispatchEvent(new CustomEvent(CAT_LURE_EVENT, { detail: { lure: next } }));
+      paint(readMode(), next);
+      close();
+    });
+  });
+
+  document.addEventListener('pointerdown', (event) => {
+    if (!menu || menu.hidden) return;
+    if (menu.contains(event.target as Node)) return;
+    close();
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') close();
+  });
+
+  window.addEventListener(
+    'wichien:live',
+    ((event: CustomEvent<{ mode?: string; lure?: string }>) => {
+      const mode = isCatBehaviorId(event.detail?.mode) ? event.detail.mode : readMode();
+      const lure = isCatLureId(event.detail?.lure) ? event.detail.lure : readLure();
+      paint(mode, lure);
+    }) as EventListener,
+  );
+
+  window.addEventListener(
+    'wichien:lure-live',
+    ((event: CustomEvent<{ lure?: string }>) => {
+      const lure = isCatLureId(event.detail?.lure) ? event.detail.lure : readLure();
+      paint(readMode(), lure);
+    }) as EventListener,
+  );
+</script>
