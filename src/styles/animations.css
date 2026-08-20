@@ -410,6 +410,108 @@
   }
 }
 
+@keyframes maat-hunt-bob {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -3px;
+  }
+}
+
+@keyframes maat-play-hop {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  40% {
+    translate: 0 -11px;
+  }
+}
+
+@keyframes maat-prey-hold {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(-2deg);
+  }
+  50% {
+    transform: translate(2px, 3px) rotate(3deg);
+  }
+}
+
+@keyframes maat-prey-shake {
+  0%,
+  100% {
+    transform: rotate(-8deg) translate(-4px, 1px);
+  }
+  25% {
+    transform: rotate(10deg) translate(5px, -3px);
+  }
+  50% {
+    transform: rotate(-12deg) translate(-3px, 3px);
+  }
+  75% {
+    transform: rotate(6deg) translate(4px, 0);
+  }
+}
+
+@keyframes maat-bat-swipe {
+  0% {
+    transform: rotate(10deg) translate(-8px, 6px);
+  }
+  45% {
+    transform: rotate(-14deg) translate(10px, -12px);
+  }
+  100% {
+    transform: rotate(0deg) translate(0, 0);
+  }
+}
+
+@keyframes maat-play-kick {
+  0%,
+  100% {
+    transform: rotate(-4deg) translate(0, 2px);
+  }
+  50% {
+    transform: rotate(10deg) translate(3px, -4px);
+  }
+}
+
+@keyframes maat-leap-stretch {
+  0% {
+    transform: scaleX(0.96) scaleY(1.04);
+  }
+  55% {
+    transform: scaleX(1.08) scaleY(0.9) translateY(-8px);
+  }
+  100% {
+    transform: scaleX(1) scaleY(1);
+  }
+}
+
+@keyframes lure-bird-hover {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -3px;
+  }
+}
+
+@keyframes lure-fur-spin {
+  0% {
+    transform: rotate(-20deg) scale(1);
+  }
+  50% {
+    transform: rotate(200deg) scale(1.12) translateY(-8px);
+  }
+  100% {
+    transform: rotate(400deg) scale(1);
+  }
+}
+
 @keyframes lure-food-swing {
   0%,
   100% {

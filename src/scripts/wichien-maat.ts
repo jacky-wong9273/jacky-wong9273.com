@@ -5,6 +5,8 @@ import {
   CAT_STORAGE_KEY,
   IDLE_BEHAVIORS,
   TOUCH_ROTATION,
+  isHuntLure,
+  type CatchPhase,
   type CatBehaviorId,
   type CatExprId,
   type CatLureId,
@@ -20,29 +22,33 @@ const IDLE_HOLD_MAX = 11000;
 const TOUCH_HOLD_MIN = 6200;
 const TOUCH_HOLD_MAX = 9000;
 const MOVE_EPSILON = 0.9;
-const JAM_RANGE = 104;
-const CHASE_CATCH_RANGE = 78;
+const HUNT_CATCH_RANGE = 82;
+const PLAY_BAT_RANGE = 92;
 const INTEREST_RANGE = 188;
-const JAM_HOLD_MIN = 1600;
-const JAM_HOLD_MAX = 2600;
-const CHASE_JAM_MS = 3000;
-const JAM_COOLDOWN = 2400;
-const CHASE_JAM_COOLDOWN = 3200;
-const YANK_RELEASE = 240;
-const POUNCE_MS = 280;
-const FLEE_MS = 2100;
+const HUNT_HOLD_MS = 1400;
+const HUNT_SHAKE_MS = 1600;
+const PLAY_COOLDOWN = 320;
+const HUNT_COOLDOWN = 2800;
+const FLEE_HUNT_MS = 2000;
+const FLEE_PLAY_MS = 1400;
 const CAT_W = 260;
 const CAT_H = 180;
+const BIRD_FLAP = [0, 1, 0, 2] as const;
 
 type Point = { x: number; y: number };
 type LiveBehavior = Exclude<CatBehaviorId, 'auto'>;
 
-const ANCHORS: Record<CatPoseId, { head: Point; mouth: Point; origin: Point }> = {
-  side: { head: { x: 199, y: 58 }, mouth: { x: 224, y: 86 }, origin: { x: 130, y: 126 } },
-  sit: { head: { x: 126, y: 50 }, mouth: { x: 130, y: 86 }, origin: { x: 130, y: 126 } },
-  sleep: { head: { x: 109, y: 92 }, mouth: { x: 125, y: 113 }, origin: { x: 130, y: 126 } },
-  stretch: { head: { x: 73, y: 131 }, mouth: { x: 47, y: 150 }, origin: { x: 130, y: 126 } },
-  pounce: { head: { x: 203, y: 92 }, mouth: { x: 234, y: 111 }, origin: { x: 130, y: 126 } },
+const ANCHORS: Record<CatPoseId, { head: Point; mouth: Point; paw: Point }> = {
+  side: { head: { x: 199, y: 58 }, mouth: { x: 224, y: 86 }, paw: { x: 214, y: 150 } },
+  sit: { head: { x: 126, y: 50 }, mouth: { x: 130, y: 86 }, paw: { x: 168, y: 150 } },
+  sleep: { head: { x: 109, y: 92 }, mouth: { x: 125, y: 113 }, paw: { x: 150, y: 140 } },
+  stretch: { head: { x: 73, y: 131 }, mouth: { x: 47, y: 150 }, paw: { x: 40, y: 155 } },
+  pounce: { head: { x: 203, y: 92 }, mouth: { x: 234, y: 111 }, paw: { x: 220, y: 148 } },
+  walk: { head: { x: 203, y: 62 }, mouth: { x: 229, y: 90 }, paw: { x: 220, y: 155 } },
+  leap: { head: { x: 187, y: 99 }, mouth: { x: 224, y: 107 }, paw: { x: 232, y: 128 } },
+  hold: { head: { x: 161, y: 101 }, mouth: { x: 135, y: 132 }, paw: { x: 128, y: 148 } },
+  bat: { head: { x: 135, y: 50 }, mouth: { x: 141, y: 76 }, paw: { x: 181, y: 32 } },
+  kick: { head: { x: 143, y: 86 }, mouth: { x: 135, y: 108 }, paw: { x: 168, y: 140 } },
 };
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
@@ -202,36 +208,41 @@ export function initWichienMaat() {
   let virtualPhase = Math.random() * Math.PI * 2;
   let lastFrame = performance.now();
   let stride = 0;
+  let walkFrame = 0;
+  let flapFrame = 0;
   let pose: CatPoseId = 'sit';
   let expr: CatExprId = 'neutral';
-  let jammed = false;
-  let jamUntil = 0;
-  let jamCooldownUntil = 0;
-  let yank = 0;
-  let pouncing = false;
-  let pounceUntil = 0;
-  let fleeing = false;
-  let fleeUntil = 0;
+  let phase: CatchPhase = 'none';
+  let phaseUntil = 0;
+  let actionCooldownUntil = 0;
+  let playCombo = 0;
   let fleeTarget: Point = restPoint();
   let yawnUntil = 0;
   let nextYawn = performance.now() + rand(8000, 16000);
   let usingMouse = hasFinePointer();
 
+  const hunting = () => isHuntLure(lure);
+  const mood = () => (hunting() ? 'hunt' : 'play');
+  const catching = () => phase !== 'none' && phase !== 'flee';
+  const pinning = () => phase === 'hold' || phase === 'shake' || phase === 'kick';
+
   const applyBehaviorClass = (next: LiveBehavior) => {
-    root.classList.remove(
-      'is-sleep',
-      'is-play',
-      'is-chase',
-      'is-toy',
-      'is-groom',
-      'is-stretch',
-      'is-loaf',
-      'is-excited',
-    );
+    root.classList.remove('is-sleep', 'is-play', 'is-chase', 'is-toy', 'is-groom', 'is-stretch', 'is-loaf', 'is-excited');
     root.classList.add(`is-${next}`);
     document.documentElement.dataset.catLive = next;
     document.documentElement.dataset.catLure = lure;
     window.dispatchEvent(new CustomEvent('wichien:live', { detail: { behavior: next, mode, lure } }));
+  };
+
+  const setJamLock = (on: boolean) => {
+    document.documentElement.classList.toggle('is-cat-jamming', on);
+  };
+
+  const resetCatch = () => {
+    phase = 'none';
+    phaseUntil = 0;
+    playCombo = 0;
+    setJamLock(false);
   };
 
   const setBehavior = (next: LiveBehavior, hold = rand(IDLE_HOLD_MIN, IDLE_HOLD_MAX)) => {
@@ -240,12 +251,7 @@ export function initWichienMaat() {
     applyBehaviorClass(next);
     if (next === 'play' || next === 'groom' || next === 'stretch') wander = wanderPoint();
     if (next === 'sleep' || next === 'loaf') wander = restPoint();
-    if (next !== 'play' && next !== 'chase') {
-      jammed = false;
-      pouncing = false;
-      fleeing = false;
-      document.documentElement.classList.remove('is-cat-jamming');
-    }
+    if (next !== 'play' && next !== 'chase' && next !== 'toy') resetCatch();
   };
 
   const setMode = (next: CatBehaviorId, persist = true) => {
@@ -264,7 +270,9 @@ export function initWichienMaat() {
     document.documentElement.dataset.catLure = next;
     lureEl.dataset.lure = next;
     root.dataset.lure = next;
+    root.dataset.mood = mood();
     if (persist) writeStored(CAT_LURE_KEY, next);
+    resetCatch();
     window.dispatchEvent(new CustomEvent('wichien:lure-live', { detail: { lure: next } }));
   };
 
@@ -288,13 +296,16 @@ export function initWichienMaat() {
     };
   };
 
+  const engageBehavior = (): LiveBehavior => (hunting() ? 'chase' : 'play');
+
   const decideAutoDesktop = (now: number) => {
     if (pointerMoving) {
-      if (behavior !== 'chase') setBehavior('chase', 1e9);
+      const next = engageBehavior();
+      if (behavior !== next) setBehavior(next, 1e9);
       return;
     }
     if (now - lastPointerMove < IDLE_MS) return;
-    if (behavior === 'chase') {
+    if (behavior === 'chase' || behavior === 'play') {
       setBehavior('toy', TOY_PLAY_MS);
       return;
     }
@@ -311,7 +322,7 @@ export function initWichienMaat() {
   };
 
   const tickBehavior = (now: number) => {
-    if (jammed || pouncing || fleeing) return;
+    if (catching() || phase === 'flee') return;
     if (mode !== 'auto') {
       if (behavior !== mode) setBehavior(mode, 1e9);
       return;
@@ -320,17 +331,16 @@ export function initWichienMaat() {
     else decideAutoTouch(now);
   };
 
-  const tryPounceJam = (now: number, distance: number) => {
-    if (jammed || pouncing || fleeing || now < jamCooldownUntil) return;
-    const reach = behavior === 'chase' ? CHASE_CATCH_RANGE : behavior === 'play' ? JAM_RANGE : 0;
-    if (!reach || distance > reach) return;
-    pouncing = true;
-    pounceUntil = now + POUNCE_MS;
+  const knockLure = (power: number, lift: number) => {
+    lureJolt.x += -facing * rand(power * 0.7, power) + rand(-18, 18);
+    lureJolt.y += rand(-lift, -lift * 0.35);
+    spawnSpark(lurePos.x, lurePos.y, lure === 'food' ? 'food' : 'toy');
   };
 
   const startFlee = (now: number) => {
-    fleeing = true;
-    fleeUntil = now + FLEE_MS;
+    phase = 'flee';
+    phaseUntil = now + (hunting() ? FLEE_HUNT_MS : FLEE_PLAY_MS);
+    setJamLock(false);
     const fromX = cat.x + CAT_W * 0.5;
     const fromY = cat.y + CAT_H * 0.7;
     const awayX = fromX < pointer.x ? -1 : 1;
@@ -339,71 +349,144 @@ export function initWichienMaat() {
       x: clamp((awayX < 0 ? 24 : window.innerWidth - 210) + rand(-28, 28), -36, window.innerWidth - 120),
       y: clamp((awayY < 0 ? 28 : window.innerHeight - 160) + rand(-22, 22), 10, window.innerHeight - 120),
     };
-    spawnSpark(lurePos.x, lurePos.y, 'dust');
+    knockLure(hunting() ? 36 : 54, hunting() ? 18 : 42);
     spawnSpark(fromX, fromY, 'dust');
   };
 
-  const startJam = (now: number) => {
-    jammed = true;
-    pouncing = false;
-    jamUntil = now + (behavior === 'chase' ? CHASE_JAM_MS : rand(JAM_HOLD_MIN, JAM_HOLD_MAX));
-    yank = 0;
-    document.documentElement.classList.add('is-cat-jamming');
-    spawnSpark(lurePos.x, lurePos.y, lure === 'food' ? 'food' : 'toy');
-    spawnSpark(lurePos.x + rand(-10, 10), lurePos.y + rand(-8, 8), lure === 'food' ? 'food' : 'toy');
+  const startHuntCatch = (now: number) => {
+    phase = 'pounce';
+    phaseUntil = now + 220;
   };
 
-  const endJam = (now: number) => {
-    jammed = false;
-    pouncing = false;
-    document.documentElement.classList.remove('is-cat-jamming');
-    jamCooldownUntil = now + (behavior === 'chase' ? CHASE_JAM_COOLDOWN : JAM_COOLDOWN);
-    lureJolt.x += rand(-22, 22);
-    lureJolt.y += rand(-16, 14);
-    if (behavior === 'chase' || behavior === 'play') {
+  const startPlayBat = (now: number) => {
+    playCombo += 1;
+    if (playCombo % 3 === 0) {
+      phase = 'kick';
+      phaseUntil = now + 460;
+    } else {
+      phase = 'bat';
+      phaseUntil = now + 340;
+      knockLure(48, 36);
+    }
+  };
+
+  const advancePhase = (now: number) => {
+    if (phase === 'none' || now < phaseUntil) return;
+
+    if (phase === 'flee') {
+      resetCatch();
+      actionCooldownUntil = now + (hunting() ? HUNT_COOLDOWN : PLAY_COOLDOWN + 700);
+      if (behavior === 'play' && mode === 'auto') wander = wanderPoint();
+      return;
+    }
+
+    if (hunting()) {
+      if (phase === 'pounce') {
+        phase = 'leap';
+        phaseUntil = now + 280;
+        return;
+      }
+      if (phase === 'leap') {
+        phase = 'hold';
+        phaseUntil = now + HUNT_HOLD_MS;
+        setJamLock(true);
+        spawnSpark(lurePos.x, lurePos.y, 'toy');
+        return;
+      }
+      if (phase === 'hold') {
+        phase = 'shake';
+        phaseUntil = now + HUNT_SHAKE_MS;
+        spawnSpark(lurePos.x, lurePos.y, 'dust');
+        return;
+      }
       startFlee(now);
+      return;
     }
-    if (behavior === 'play' && mode === 'auto') {
-      wander = wanderPoint();
+
+    if (phase === 'bat' || phase === 'kick') {
+      if (phase === 'kick') knockLure(62, 52);
+      if (playCombo >= 4) {
+        playCombo = 0;
+        startFlee(now);
+      } else {
+        phase = 'none';
+        actionCooldownUntil = now + PLAY_COOLDOWN;
+      }
     }
   };
 
-  const choosePose = (speed: number): CatPoseId => {
+  const tryStartCatch = (now: number, distance: number) => {
+    if (phase !== 'none' || now < actionCooldownUntil) return;
+    const live = behavior === 'chase' || behavior === 'play' || behavior === 'toy';
+    if (!live) return;
+    if (hunting()) {
+      if (distance <= HUNT_CATCH_RANGE) startHuntCatch(now);
+      return;
+    }
+    if (distance <= PLAY_BAT_RANGE) startPlayBat(now);
+  };
+
+  const poseForPhase = (speed: number, distance: number): CatPoseId | null => {
+    switch (phase) {
+      case 'pounce':
+        return 'pounce';
+      case 'leap':
+        return 'leap';
+      case 'hold':
+      case 'shake':
+        return 'hold';
+      case 'bat':
+      case 'toss':
+        return 'bat';
+      case 'kick':
+        return 'kick';
+      case 'chase-toy':
+      case 'flee':
+        return speed > 10 ? 'walk' : 'side';
+      default:
+        break;
+    }
     if (behavior === 'sleep') return 'sleep';
     if (behavior === 'stretch') return 'stretch';
-    if (behavior === 'groom') return 'sit';
-    if (behavior === 'loaf') return 'sit';
-    if (pouncing || jammed) return 'pounce';
-    if (fleeing || behavior === 'chase') return 'side';
-    if (behavior === 'play') return speed > 10 || Math.hypot(cat.x - wander.x, cat.y - wander.y) > 24 ? 'side' : 'sit';
-    if (behavior === 'toy') return 'sit';
-    return speed > 14 ? 'side' : 'sit';
+    if (behavior === 'groom' || behavior === 'loaf') return 'sit';
+    if (hunting() && (behavior === 'chase' || behavior === 'play')) {
+      if (speed > 16) return 'walk';
+      return distance < 170 ? 'pounce' : 'side';
+    }
+    if (!hunting() && (behavior === 'play' || behavior === 'chase' || behavior === 'toy')) {
+      if (speed > 14) return 'walk';
+      return distance < 110 ? 'sit' : 'side';
+    }
+    if (behavior === 'toy') return speed > 12 ? 'walk' : 'sit';
+    return speed > 14 ? 'walk' : 'sit';
   };
 
   const chooseExpr = (now: number, distance: number): CatExprId => {
     if (now < yawnUntil) return 'shut';
-    if (jammed || pouncing) return 'focused';
-    if (fleeing) return 'alert';
+    if (phase === 'hold' || phase === 'shake' || phase === 'leap') return 'focused';
+    if (phase === 'bat' || phase === 'kick' || phase === 'toss') return 'happy';
+    if (phase === 'flee') return hunting() ? 'alert' : 'happy';
     if (behavior === 'sleep' || behavior === 'groom') return 'shut';
     if (behavior === 'stretch') return 'sleepy';
     if (behavior === 'loaf') return distance < 140 ? 'alert' : 'sleepy';
-    if (behavior === 'chase') return distance < 130 ? 'focused' : 'alert';
-    if (behavior === 'play') return 'happy';
-    if (behavior === 'toy') return 'happy';
-    return 'neutral';
+    if (hunting()) return distance < 150 ? 'focused' : 'alert';
+    return 'happy';
   };
 
   const maxSpeedFor = (distance: number) => {
-    if (fleeing) return 280;
-    if (pouncing) return 320;
-    if (jammed) return 28;
-    if (behavior === 'chase') {
-      if (distance > 280) return 132;
-      if (distance > 140) return 172;
-      return 118;
+    if (phase === 'flee') return hunting() ? 300 : 220;
+    if (phase === 'leap') return 340;
+    if (phase === 'pounce') return 260;
+    if (pinning()) return 22;
+    if (phase === 'bat' || phase === 'kick') return 40;
+    if (hunting() && behavior === 'chase') {
+      if (distance > 240) return 148;
+      if (distance > 120) return 88;
+      return 64;
     }
+    if (!hunting() && (behavior === 'play' || behavior === 'chase' || behavior === 'toy')) return 168;
     if (behavior === 'toy') return 78;
-    if (behavior === 'play') return 86;
+    if (behavior === 'play') return 96;
     if (behavior === 'stretch' || behavior === 'groom') return 54;
     return 38;
   };
@@ -431,15 +514,13 @@ export function initWichienMaat() {
       if (Math.hypot(dx, dy) > MOVE_EPSILON) {
         lastPointerMove = performance.now();
         pointerMoving = true;
-        if (!jammed) {
+        if (!pinning()) {
           lureJolt.x *= 0.35;
           lureJolt.y *= 0.35;
-        } else if (behavior !== 'chase') {
-          yank += Math.hypot(dx, dy);
         }
       }
       sparkBudget += 1;
-      if (sparkBudget > 5 && (behavior === 'chase' || behavior === 'toy' || jammed)) {
+      if (sparkBudget > 5 && (behavior === 'chase' || behavior === 'toy' || catching())) {
         sparkBudget = 0;
         spawnSpark(event.clientX, event.clientY, lure === 'food' ? 'food' : 'toy');
       }
@@ -467,7 +548,7 @@ export function initWichienMaat() {
 
     if (!fine) {
       pointer = virtualMouse(now);
-      pointerMoving = behavior === 'chase';
+      pointerMoving = behavior === 'chase' || behavior === 'play';
     } else if (now - lastPointerMove > IDLE_MS) {
       pointerMoving = false;
     }
@@ -479,71 +560,61 @@ export function initWichienMaat() {
 
     const toyGoalX = pointer.x + lureJolt.x;
     const toyGoalY = pointer.y + lureJolt.y;
-    if (!jammed) {
-      lurePos.x = lerp(lurePos.x, toyGoalX, fine ? 0.42 : 0.07);
-      lurePos.y = lerp(lurePos.y, toyGoalY, fine ? 0.42 : 0.07);
+    if (!pinning()) {
+      const follow = phase === 'leap' ? 0.18 : fine ? 0.42 : 0.07;
+      lurePos.x = lerp(lurePos.x, toyGoalX, follow);
+      lurePos.y = lerp(lurePos.y, toyGoalY, follow);
     }
-    lureJolt.x *= 0.88;
-    lureJolt.y *= 0.88;
+    lureJolt.x *= phase === 'toss' || phase === 'bat' ? 0.94 : 0.88;
+    lureJolt.y *= phase === 'toss' || phase === 'bat' ? 0.93 : 0.88;
 
     tickBehavior(now);
+    advancePhase(now);
 
-    pose = choosePose(Math.hypot(vel.x, vel.y));
+    pose = poseForPhase(Math.hypot(vel.x, vel.y), 0) ?? 'sit';
     const mouth = worldFromLocal(cat, ANCHORS[pose].mouth, facing);
     const head = worldFromLocal(cat, ANCHORS[pose].head, facing);
+    const paw = worldFromLocal(cat, ANCHORS[pose].paw, facing);
     const distance = Math.hypot(mouth.x - lurePos.x, mouth.y - lurePos.y);
 
-    if (fleeing && now >= fleeUntil) {
-      fleeing = false;
-    }
+    if (phase === 'none') tryStartCatch(now, distance);
 
-    if (pouncing && now >= pounceUntil) {
-      if (distance < JAM_RANGE + 18) startJam(now);
-      else {
-        pouncing = false;
-        jamCooldownUntil = now + 900;
-      }
-    }
-
-    if (jammed) {
-      const pin = worldFromLocal(cat, ANCHORS[pose].mouth, facing);
-      lurePos.x = lerp(lurePos.x, pin.x + facing * 8, 0.4);
-      lurePos.y = lerp(lurePos.y, pin.y + 2, 0.4);
-      if (now >= jamUntil || yank > YANK_RELEASE) endJam(now);
-    } else if (!fleeing) {
-      tryPounceJam(now, distance);
+    if (phase === 'hold' || phase === 'shake') {
+      lurePos.x = lerp(lurePos.x, mouth.x + facing * 6, 0.45);
+      lurePos.y = lerp(lurePos.y, mouth.y + 4, 0.45);
+    } else if (phase === 'kick') {
+      lurePos.x = lerp(lurePos.x, paw.x, 0.4);
+      lurePos.y = lerp(lurePos.y, paw.y, 0.4);
+    } else if (phase === 'bat') {
+      lurePos.x = lerp(lurePos.x, paw.x, 0.28);
+      lurePos.y = lerp(lurePos.y, paw.y, 0.28);
+    } else if (phase === 'leap') {
+      lurePos.x = lerp(lurePos.x, mouth.x + facing * 10, 0.12);
+      lurePos.y = lerp(lurePos.y, mouth.y, 0.12);
     }
 
     const mouthAnchor = ANCHORS[pose].mouth;
-    if (fleeing) {
+    if (phase === 'flee') {
       catTarget = fleeTarget;
-    } else if (behavior === 'chase' || pouncing) {
-      const standoff = pouncing ? 8 : behavior === 'chase' ? 26 : 54;
-      catTarget = catFromLocal(
-        { x: lurePos.x - facing * standoff, y: lurePos.y + 6 },
-        mouthAnchor,
-        facing,
-      );
-    } else if (behavior === 'toy') {
-      catTarget = catFromLocal({ x: lurePos.x - facing * 26, y: lurePos.y + 10 }, mouthAnchor, facing);
-      if (now - lastToyBat > (lure === 'food' ? 680 : 560) && distance < 84) {
-        lastToyBat = now;
-        lureJolt.x += rand(-16, 16);
-        lureJolt.y += rand(-12, 10);
-        spawnSpark(lurePos.x, lurePos.y, lure === 'food' ? 'food' : 'toy');
+    } else if (phase === 'leap' || phase === 'pounce') {
+      catTarget = catFromLocal({ x: lurePos.x - facing * 8, y: lurePos.y + 4 }, mouthAnchor, facing);
+    } else if (pinning() || phase === 'bat') {
+      catTarget = cat;
+      vel.x *= 0.7;
+      vel.y *= 0.7;
+    } else if (behavior === 'chase' || (behavior === 'play' && hunting())) {
+      const standoff = hunting() ? (distance < 150 ? 22 : 36) : 28;
+      catTarget = catFromLocal({ x: lurePos.x - facing * standoff, y: lurePos.y + 6 }, mouthAnchor, facing);
+    } else if (behavior === 'toy' || behavior === 'play') {
+      if (distance < INTEREST_RANGE && now >= actionCooldownUntil) {
+        catTarget = catFromLocal({ x: lurePos.x - facing * 30, y: lurePos.y + 10 }, mouthAnchor, facing);
+      } else {
+        if (Math.hypot(cat.x - wander.x, cat.y - wander.y) < 30) wander = wanderPoint();
+        catTarget = wander;
       }
-    } else if (behavior === 'play') {
-      if (!jammed && !pouncing) {
-        if (distance < INTEREST_RANGE && now >= jamCooldownUntil) {
-          catTarget = catFromLocal(
-            { x: lurePos.x - facing * 34, y: lurePos.y + 8 },
-            mouthAnchor,
-            facing,
-          );
-        } else {
-          if (Math.hypot(cat.x - wander.x, cat.y - wander.y) < 30) wander = wanderPoint();
-          catTarget = wander;
-        }
+      if (behavior === 'toy' && !hunting() && now - lastToyBat > 520 && distance < 84 && phase === 'none') {
+        lastToyBat = now;
+        startPlayBat(now);
       }
     } else if (behavior === 'sleep' || behavior === 'loaf') {
       catTarget.x = lerp(catTarget.x, wander.x, 0.03);
@@ -554,60 +625,66 @@ export function initWichienMaat() {
     }
 
     const speedCap = maxSpeedFor(distance);
-    steer(cat, vel, catTarget, speedCap, pouncing ? 900 : fleeing ? 780 : 420, dt);
+    const accel = phase === 'leap' ? 980 : phase === 'flee' ? 820 : phase === 'pounce' ? 760 : 420;
+    steer(cat, vel, catTarget, speedCap, accel, dt);
     cat.x += vel.x * dt;
     cat.y += vel.y * dt;
     cat.x = clamp(cat.x, -36, window.innerWidth - 110);
     cat.y = clamp(cat.y, 10, window.innerHeight - 118);
 
     const speed = Math.hypot(vel.x, vel.y);
-    stride += speed * dt * 0.045;
+    const gaitRate = (hunting() ? 0.052 : 0.07) * (phase === 'flee' ? 1.55 : 1);
+    stride += speed * dt * gaitRate;
+    walkFrame = Math.floor(stride) % 4;
+    const flapMs = phase === 'hold' || phase === 'shake' ? 70 : pointerMoving || phase === 'flee' ? 90 : 130;
+    flapFrame = BIRD_FLAP[Math.floor(now / flapMs) % BIRD_FLAP.length];
+
     const lookX = behavior === 'sleep' ? head.x + facing * 40 : lurePos.x;
     const desiredFacing = lookX < head.x - 6 ? -1 : lookX > head.x + 6 ? 1 : facing;
-    if (fleeing) {
+    if (phase === 'flee') {
       facing = vel.x < -8 ? -1 : vel.x > 8 ? 1 : facing;
-    } else if (desiredFacing !== facing && now >= turnAfter && (speed > 18 || behavior === 'chase' || behavior === 'play')) {
+    } else if (desiredFacing !== facing && now >= turnAfter && (speed > 18 || catching() || behavior === 'chase' || behavior === 'play')) {
       facing = desiredFacing;
-      turnAfter = now + 280;
+      turnAfter = now + 260;
     } else if (desiredFacing !== facing && now >= turnAfter + 420) {
       facing = desiredFacing;
       turnAfter = now + 360;
     }
 
-    pose = choosePose(speed);
+    pose = poseForPhase(speed, distance) ?? 'sit';
     expr = chooseExpr(now, distance);
 
-    const tilt = fleeing
-      ? clamp(vel.x * 0.05 * facing, -10, 10)
-      : behavior === 'chase'
-        ? clamp(vel.x * 0.04 * facing, -7, 7)
-        : behavior === 'stretch'
-          ? -4
-          : pouncing
-            ? -8
+    const tilt =
+      phase === 'leap'
+        ? -10
+        : phase === 'flee'
+          ? clamp(vel.x * 0.05 * facing, -10, 10)
+          : hunting() && behavior === 'chase'
+            ? clamp(vel.x * 0.035 * facing, -6, 6)
             : 0;
 
     wrap.style.transform = `translate3d(${cat.x}px, ${cat.y}px, 0) scaleX(${facing}) rotate(${tilt}deg)`;
-    wrap.style.setProperty('--gait', `${clamp(0.86 - speed / 420, 0.32, 0.86)}s`);
-    wrap.style.setProperty('--stride', String(stride));
+    wrap.style.setProperty('--gait', `${clamp(0.82 - speed / 380, 0.28, 0.82)}s`);
 
-    const showLure = fine || behavior === 'chase' || behavior === 'toy' || jammed || fleeing;
+    const showLure = fine || behavior === 'chase' || behavior === 'toy' || catching() || phase === 'flee';
     lureEl.style.transform = `translate3d(${lurePos.x}px, ${lurePos.y}px, 0)`;
     lureEl.classList.toggle('is-visible', showLure);
-    lureEl.classList.toggle('is-batted', Math.hypot(lureJolt.x, lureJolt.y) > 5);
-    lureEl.classList.toggle('is-running', pointerMoving || behavior === 'chase');
-    lureEl.classList.toggle('is-jammed', jammed);
+    lureEl.classList.toggle('is-batted', Math.hypot(lureJolt.x, lureJolt.y) > 8 && !hunting());
+    lureEl.classList.toggle('is-tossed', phase === 'toss' || (phase === 'flee' && !hunting()));
+    lureEl.classList.toggle('is-running', pointerMoving || phase === 'flee' || behavior === 'chase');
+    lureEl.classList.toggle('is-caught', pinning());
     lureEl.dataset.lure = lure;
+    lureEl.dataset.flap = String(flapFrame);
 
     root.dataset.pose = pose;
     root.dataset.poseGroup = pose;
     root.dataset.expr = expr;
     root.dataset.lure = lure;
-    root.classList.toggle('is-moving', !jammed && speed > 14 && (pose === 'side' || pose === 'pounce' || fleeing));
-    root.classList.toggle('is-pouncing', pouncing);
-    root.classList.toggle('is-jamming', jammed);
-    root.classList.toggle('is-fleeing', fleeing);
-    root.classList.toggle('is-excited', behavior === 'chase' && distance < 150);
+    root.dataset.mood = mood();
+    root.dataset.phase = phase;
+    root.dataset.frame = String(walkFrame);
+    root.classList.toggle('is-moving', !pinning() && speed > 12 && (pose === 'walk' || pose === 'side' || phase === 'flee'));
+    root.classList.toggle('is-excited', hunting() && distance < 150);
     root.classList.toggle('is-yawning', now < yawnUntil);
 
     requestAnimationFrame(tick);
