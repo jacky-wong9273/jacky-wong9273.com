@@ -21,23 +21,28 @@ const TOUCH_HOLD_MIN = 6200;
 const TOUCH_HOLD_MAX = 9000;
 const MOVE_EPSILON = 0.9;
 const JAM_RANGE = 104;
+const CHASE_CATCH_RANGE = 78;
 const INTEREST_RANGE = 188;
 const JAM_HOLD_MIN = 1600;
 const JAM_HOLD_MAX = 2600;
+const CHASE_JAM_MS = 3000;
 const JAM_COOLDOWN = 2400;
+const CHASE_JAM_COOLDOWN = 3200;
 const YANK_RELEASE = 240;
 const POUNCE_MS = 280;
-const CAT_W = 248;
-const CAT_H = 172;
+const FLEE_MS = 2100;
+const CAT_W = 260;
+const CAT_H = 180;
 
 type Point = { x: number; y: number };
 type LiveBehavior = Exclude<CatBehaviorId, 'auto'>;
 
 const ANCHORS: Record<CatPoseId, { head: Point; mouth: Point; origin: Point }> = {
-  side: { head: { x: 214, y: 70 }, mouth: { x: 240, y: 84 }, origin: { x: 130, y: 118 } },
-  sit: { head: { x: 128, y: 52 }, mouth: { x: 128, y: 82 }, origin: { x: 130, y: 124 } },
-  sleep: { head: { x: 132, y: 90 }, mouth: { x: 128, y: 104 }, origin: { x: 130, y: 116 } },
-  stretch: { head: { x: 62, y: 118 }, mouth: { x: 46, y: 128 }, origin: { x: 130, y: 124 } },
+  side: { head: { x: 199, y: 58 }, mouth: { x: 224, y: 86 }, origin: { x: 130, y: 126 } },
+  sit: { head: { x: 126, y: 50 }, mouth: { x: 130, y: 86 }, origin: { x: 130, y: 126 } },
+  sleep: { head: { x: 109, y: 92 }, mouth: { x: 125, y: 113 }, origin: { x: 130, y: 126 } },
+  stretch: { head: { x: 73, y: 131 }, mouth: { x: 47, y: 150 }, origin: { x: 130, y: 126 } },
+  pounce: { head: { x: 203, y: 92 }, mouth: { x: 234, y: 111 }, origin: { x: 130, y: 126 } },
 };
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
@@ -140,8 +145,6 @@ export function initWichienMaat() {
   const wrap = root?.querySelector<HTMLElement>('.cursor-cat-wrap');
   const lureEl = document.getElementById('cat-lure');
   const trail = document.getElementById('cursor-cat-trail');
-  const pupils = () => Array.from(root?.querySelectorAll<SVGElement>('.cat-pupil') ?? []);
-  const heads = () => Array.from(root?.querySelectorAll<SVGElement>('.cat-head') ?? []);
   if (!root || !wrap || !lureEl || !trail) return;
 
   if (prefersReducedMotion()) {
@@ -149,7 +152,7 @@ export function initWichienMaat() {
     root.dataset.pose = 'sit';
     root.dataset.poseGroup = 'sit';
     root.dataset.expr = 'sleepy';
-    wrap.style.transform = `translate3d(${window.innerWidth - 188}px, ${window.innerHeight - 190}px, 0)`;
+    wrap.style.transform = `translate3d(${window.innerWidth - 200}px, ${window.innerHeight - 196}px, 0)`;
     lureEl.hidden = true;
     return;
   }
@@ -207,13 +210,24 @@ export function initWichienMaat() {
   let yank = 0;
   let pouncing = false;
   let pounceUntil = 0;
+  let fleeing = false;
+  let fleeUntil = 0;
+  let fleeTarget: Point = restPoint();
   let yawnUntil = 0;
   let nextYawn = performance.now() + rand(8000, 16000);
-  let lookHold = { x: 0, y: 0 };
   let usingMouse = hasFinePointer();
 
   const applyBehaviorClass = (next: LiveBehavior) => {
-    root.classList.remove('is-sleep', 'is-play', 'is-chase', 'is-toy', 'is-groom', 'is-stretch', 'is-loaf', 'is-excited');
+    root.classList.remove(
+      'is-sleep',
+      'is-play',
+      'is-chase',
+      'is-toy',
+      'is-groom',
+      'is-stretch',
+      'is-loaf',
+      'is-excited',
+    );
     root.classList.add(`is-${next}`);
     document.documentElement.dataset.catLive = next;
     document.documentElement.dataset.catLure = lure;
@@ -229,6 +243,8 @@ export function initWichienMaat() {
     if (next !== 'play' && next !== 'chase') {
       jammed = false;
       pouncing = false;
+      fleeing = false;
+      document.documentElement.classList.remove('is-cat-jamming');
     }
   };
 
@@ -295,6 +311,7 @@ export function initWichienMaat() {
   };
 
   const tickBehavior = (now: number) => {
+    if (jammed || pouncing || fleeing) return;
     if (mode !== 'auto') {
       if (behavior !== mode) setBehavior(mode, 1e9);
       return;
@@ -304,26 +321,48 @@ export function initWichienMaat() {
   };
 
   const tryPounceJam = (now: number, distance: number) => {
-    if (behavior !== 'play' || jammed || pouncing || now < jamCooldownUntil) return;
-    if (distance > JAM_RANGE) return;
+    if (jammed || pouncing || fleeing || now < jamCooldownUntil) return;
+    const reach = behavior === 'chase' ? CHASE_CATCH_RANGE : behavior === 'play' ? JAM_RANGE : 0;
+    if (!reach || distance > reach) return;
     pouncing = true;
     pounceUntil = now + POUNCE_MS;
+  };
+
+  const startFlee = (now: number) => {
+    fleeing = true;
+    fleeUntil = now + FLEE_MS;
+    const fromX = cat.x + CAT_W * 0.5;
+    const fromY = cat.y + CAT_H * 0.7;
+    const awayX = fromX < pointer.x ? -1 : 1;
+    const awayY = fromY < pointer.y ? -1 : 1;
+    fleeTarget = {
+      x: clamp((awayX < 0 ? 24 : window.innerWidth - 210) + rand(-28, 28), -36, window.innerWidth - 120),
+      y: clamp((awayY < 0 ? 28 : window.innerHeight - 160) + rand(-22, 22), 10, window.innerHeight - 120),
+    };
+    spawnSpark(lurePos.x, lurePos.y, 'dust');
+    spawnSpark(fromX, fromY, 'dust');
   };
 
   const startJam = (now: number) => {
     jammed = true;
     pouncing = false;
-    jamUntil = now + rand(JAM_HOLD_MIN, JAM_HOLD_MAX);
+    jamUntil = now + (behavior === 'chase' ? CHASE_JAM_MS : rand(JAM_HOLD_MIN, JAM_HOLD_MAX));
     yank = 0;
+    document.documentElement.classList.add('is-cat-jamming');
     spawnSpark(lurePos.x, lurePos.y, lure === 'food' ? 'food' : 'toy');
+    spawnSpark(lurePos.x + rand(-10, 10), lurePos.y + rand(-8, 8), lure === 'food' ? 'food' : 'toy');
   };
 
   const endJam = (now: number) => {
     jammed = false;
     pouncing = false;
-    jamCooldownUntil = now + JAM_COOLDOWN;
-    lureJolt.x += rand(-18, 18);
-    lureJolt.y += rand(-14, 12);
+    document.documentElement.classList.remove('is-cat-jamming');
+    jamCooldownUntil = now + (behavior === 'chase' ? CHASE_JAM_COOLDOWN : JAM_COOLDOWN);
+    lureJolt.x += rand(-22, 22);
+    lureJolt.y += rand(-16, 14);
+    if (behavior === 'chase' || behavior === 'play') {
+      startFlee(now);
+    }
     if (behavior === 'play' && mode === 'auto') {
       wander = wanderPoint();
     }
@@ -334,9 +373,8 @@ export function initWichienMaat() {
     if (behavior === 'stretch') return 'stretch';
     if (behavior === 'groom') return 'sit';
     if (behavior === 'loaf') return 'sit';
-    if (pouncing) return 'side';
-    if (jammed) return lure === 'food' ? 'sit' : 'side';
-    if (behavior === 'chase') return 'side';
+    if (pouncing || jammed) return 'pounce';
+    if (fleeing || behavior === 'chase') return 'side';
     if (behavior === 'play') return speed > 10 || Math.hypot(cat.x - wander.x, cat.y - wander.y) > 24 ? 'side' : 'sit';
     if (behavior === 'toy') return 'sit';
     return speed > 14 ? 'side' : 'sit';
@@ -344,27 +382,28 @@ export function initWichienMaat() {
 
   const chooseExpr = (now: number, distance: number): CatExprId => {
     if (now < yawnUntil) return 'shut';
-    if (jammed) return lure === 'food' ? 'eat' : 'happy';
+    if (jammed || pouncing) return 'focused';
+    if (fleeing) return 'alert';
     if (behavior === 'sleep' || behavior === 'groom') return 'shut';
     if (behavior === 'stretch') return 'sleepy';
     if (behavior === 'loaf') return distance < 140 ? 'alert' : 'sleepy';
     if (behavior === 'chase') return distance < 130 ? 'focused' : 'alert';
-    if (behavior === 'play') return pouncing ? 'focused' : 'happy';
-    if (behavior === 'toy') return lure === 'food' ? 'eat' : 'happy';
+    if (behavior === 'play') return 'happy';
+    if (behavior === 'toy') return 'happy';
     return 'neutral';
   };
 
   const maxSpeedFor = (distance: number) => {
+    if (fleeing) return 280;
     if (pouncing) return 320;
-    if (jammed) return 36;
+    if (jammed) return 28;
     if (behavior === 'chase') {
-      const hungry = lure === 'food' ? 1.12 : 1;
-      if (distance > 280) return 128 * hungry;
-      if (distance > 140) return 168 * hungry;
-      return 112 * hungry;
+      if (distance > 280) return 132;
+      if (distance > 140) return 172;
+      return 118;
     }
     if (behavior === 'toy') return 78;
-    if (behavior === 'play') return pouncing ? 300 : 86;
+    if (behavior === 'play') return 86;
     if (behavior === 'stretch' || behavior === 'groom') return 54;
     return 38;
   };
@@ -395,7 +434,7 @@ export function initWichienMaat() {
         if (!jammed) {
           lureJolt.x *= 0.35;
           lureJolt.y *= 0.35;
-        } else {
+        } else if (behavior !== 'chase') {
           yank += Math.hypot(dx, dy);
         }
       }
@@ -454,6 +493,10 @@ export function initWichienMaat() {
     const head = worldFromLocal(cat, ANCHORS[pose].head, facing);
     const distance = Math.hypot(mouth.x - lurePos.x, mouth.y - lurePos.y);
 
+    if (fleeing && now >= fleeUntil) {
+      fleeing = false;
+    }
+
     if (pouncing && now >= pounceUntil) {
       if (distance < JAM_RANGE + 18) startJam(now);
       else {
@@ -464,16 +507,18 @@ export function initWichienMaat() {
 
     if (jammed) {
       const pin = worldFromLocal(cat, ANCHORS[pose].mouth, facing);
-      lurePos.x = lerp(lurePos.x, pin.x + facing * 6, 0.35);
-      lurePos.y = lerp(lurePos.y, pin.y + 4, 0.35);
+      lurePos.x = lerp(lurePos.x, pin.x + facing * 8, 0.4);
+      lurePos.y = lerp(lurePos.y, pin.y + 2, 0.4);
       if (now >= jamUntil || yank > YANK_RELEASE) endJam(now);
-    } else {
+    } else if (!fleeing) {
       tryPounceJam(now, distance);
     }
 
     const mouthAnchor = ANCHORS[pose].mouth;
-    if (behavior === 'chase' || pouncing) {
-      const standoff = pouncing ? 10 : 54;
+    if (fleeing) {
+      catTarget = fleeTarget;
+    } else if (behavior === 'chase' || pouncing) {
+      const standoff = pouncing ? 8 : behavior === 'chase' ? 26 : 54;
       catTarget = catFromLocal(
         { x: lurePos.x - facing * standoff, y: lurePos.y + 6 },
         mouthAnchor,
@@ -509,7 +554,7 @@ export function initWichienMaat() {
     }
 
     const speedCap = maxSpeedFor(distance);
-    steer(cat, vel, catTarget, speedCap, pouncing ? 900 : 420, dt);
+    steer(cat, vel, catTarget, speedCap, pouncing ? 900 : fleeing ? 780 : 420, dt);
     cat.x += vel.x * dt;
     cat.y += vel.y * dt;
     cat.x = clamp(cat.x, -36, window.innerWidth - 110);
@@ -519,7 +564,9 @@ export function initWichienMaat() {
     stride += speed * dt * 0.045;
     const lookX = behavior === 'sleep' ? head.x + facing * 40 : lurePos.x;
     const desiredFacing = lookX < head.x - 6 ? -1 : lookX > head.x + 6 ? 1 : facing;
-    if (desiredFacing !== facing && now >= turnAfter && (speed > 18 || behavior === 'chase' || behavior === 'play')) {
+    if (fleeing) {
+      facing = vel.x < -8 ? -1 : vel.x > 8 ? 1 : facing;
+    } else if (desiredFacing !== facing && now >= turnAfter && (speed > 18 || behavior === 'chase' || behavior === 'play')) {
       facing = desiredFacing;
       turnAfter = now + 280;
     } else if (desiredFacing !== facing && now >= turnAfter + 420) {
@@ -530,8 +577,9 @@ export function initWichienMaat() {
     pose = choosePose(speed);
     expr = chooseExpr(now, distance);
 
-    const tilt =
-      behavior === 'chase'
+    const tilt = fleeing
+      ? clamp(vel.x * 0.05 * facing, -10, 10)
+      : behavior === 'chase'
         ? clamp(vel.x * 0.04 * facing, -7, 7)
         : behavior === 'stretch'
           ? -4
@@ -540,22 +588,10 @@ export function initWichienMaat() {
             : 0;
 
     wrap.style.transform = `translate3d(${cat.x}px, ${cat.y}px, 0) scaleX(${facing}) rotate(${tilt}deg)`;
-    wrap.style.setProperty('--gait', `${clamp(0.86 - speed / 420, 0.38, 0.86)}s`);
+    wrap.style.setProperty('--gait', `${clamp(0.86 - speed / 420, 0.32, 0.86)}s`);
     wrap.style.setProperty('--stride', String(stride));
 
-    const lookDx = lurePos.x - head.x;
-    const lookDy = lurePos.y - head.y;
-    lookHold.x = lerp(lookHold.x, clamp((lookDx * facing) / 46, -18, 18), 0.08);
-    lookHold.y = lerp(lookHold.y, clamp(lookDy / 52, -12, 12), 0.08);
-    const lockHead = behavior === 'groom' || (lure === 'food' && (jammed || behavior === 'toy'));
-    heads().forEach((node) => {
-      node.style.transform = lockHead ? '' : `rotate(${lookHold.x * 0.35 + lookHold.y * 0.15}deg)`;
-    });
-    pupils().forEach((node) => {
-      node.style.transform = `translate(${clamp(lookHold.x * 0.12, -2.4, 2.4)}px, ${clamp(lookHold.y * 0.1, -1.6, 1.6)}px)`;
-    });
-
-    const showLure = fine || behavior === 'chase' || behavior === 'toy' || jammed;
+    const showLure = fine || behavior === 'chase' || behavior === 'toy' || jammed || fleeing;
     lureEl.style.transform = `translate3d(${lurePos.x}px, ${lurePos.y}px, 0)`;
     lureEl.classList.toggle('is-visible', showLure);
     lureEl.classList.toggle('is-batted', Math.hypot(lureJolt.x, lureJolt.y) > 5);
@@ -567,9 +603,10 @@ export function initWichienMaat() {
     root.dataset.poseGroup = pose;
     root.dataset.expr = expr;
     root.dataset.lure = lure;
-    root.classList.toggle('is-moving', speed > 14 && (pose === 'side' || pouncing));
+    root.classList.toggle('is-moving', !jammed && speed > 14 && (pose === 'side' || pose === 'pounce' || fleeing));
     root.classList.toggle('is-pouncing', pouncing);
     root.classList.toggle('is-jamming', jammed);
+    root.classList.toggle('is-fleeing', fleeing);
     root.classList.toggle('is-excited', behavior === 'chase' && distance < 150);
     root.classList.toggle('is-yawning', now < yawnUntil);
 

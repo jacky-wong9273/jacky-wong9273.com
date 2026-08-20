@@ -354,13 +354,59 @@
   }
 }
 
-@keyframes lure-mouse-scurry {
+@keyframes lure-bird-flap {
   0%,
   100% {
-    transform: rotate(-6deg) translateY(0);
+    transform: rotate(-10deg) translateY(0) scaleY(1);
   }
   50% {
-    transform: rotate(6deg) translateY(-2px);
+    transform: rotate(12deg) translateY(-5px) scaleY(0.88);
+  }
+}
+
+@keyframes lure-fur-bounce {
+  0%,
+  100% {
+    transform: scale(1) rotate(-8deg);
+  }
+  50% {
+    transform: scale(1.1) rotate(10deg) translateY(-4px);
+  }
+}
+
+@keyframes lure-fur-squish {
+  0%,
+  100% {
+    transform: scale(0.92, 1.06) rotate(-10deg);
+  }
+  50% {
+    transform: scale(1.08, 0.86) rotate(12deg) translateY(2px);
+  }
+}
+
+@keyframes maat-jam-shake {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  25% {
+    translate: -4px 2px;
+  }
+  50% {
+    translate: 4px -2px;
+  }
+  75% {
+    translate: -2px 1px;
+  }
+}
+
+@keyframes maat-groom-photo {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(-6deg) translateY(2px);
   }
 }
 

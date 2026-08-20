@@ -129,6 +129,11 @@ html.has-cat-lure .cat-context-menu button {
   cursor: pointer !important;
 }
 
+html.is-cat-jamming,
+html.is-cat-jamming * {
+  cursor: none !important;
+}
+
 body {
   font-family: var(--font-sans);
   background-color: var(--color-bg);
