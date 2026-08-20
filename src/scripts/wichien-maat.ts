@@ -25,7 +25,9 @@ const MOVE_EPSILON = 0.9;
 const HUNT_CATCH_RANGE = 82;
 const PLAY_BAT_RANGE = 92;
 const INTEREST_RANGE = 188;
-const HUNT_HOLD_MS = 1400;
+const HUNT_POUNCE_MS = 260;
+const HUNT_LEAP_MS = 420;
+const HUNT_HOLD_MS = 1500;
 const HUNT_SHAKE_MS = 1600;
 const PLAY_COOLDOWN = 320;
 const HUNT_COOLDOWN = 2800;
@@ -146,7 +148,22 @@ const steer = (pos: Point, vel: Point, target: Point, maxSpeed: number, accel: n
   return dist;
 };
 
+declare global {
+  interface Window {
+    __wichienMaatStop?: () => void;
+  }
+}
+
 export function initWichienMaat() {
+  window.__wichienMaatStop?.();
+  let stopped = false;
+  let raf = 0;
+  window.__wichienMaatStop = () => {
+    stopped = true;
+    if (raf) cancelAnimationFrame(raf);
+    document.documentElement.classList.remove('is-cat-jamming');
+  };
+
   const root = document.getElementById('cursor-cat');
   const wrap = root?.querySelector<HTMLElement>('.cursor-cat-wrap');
   const lureEl = document.getElementById('cat-lure');
@@ -355,7 +372,9 @@ export function initWichienMaat() {
 
   const startHuntCatch = (now: number) => {
     phase = 'pounce';
-    phaseUntil = now + 220;
+    phaseUntil = now + HUNT_POUNCE_MS;
+    vel.x = 0;
+    vel.y = 0;
   };
 
   const startPlayBat = (now: number) => {
@@ -383,23 +402,30 @@ export function initWichienMaat() {
     if (hunting()) {
       if (phase === 'pounce') {
         phase = 'leap';
-        phaseUntil = now + 280;
+        phaseUntil = now + HUNT_LEAP_MS;
         return;
       }
       if (phase === 'leap') {
         phase = 'hold';
         phaseUntil = now + HUNT_HOLD_MS;
+        vel.x = 0;
+        vel.y = 0;
         setJamLock(true);
         spawnSpark(lurePos.x, lurePos.y, 'toy');
+        spawnSpark(lurePos.x + rand(-8, 8), lurePos.y + rand(-8, 8), 'dust');
         return;
       }
       if (phase === 'hold') {
         phase = 'shake';
         phaseUntil = now + HUNT_SHAKE_MS;
+        vel.x = 0;
+        vel.y = 0;
         spawnSpark(lurePos.x, lurePos.y, 'dust');
         return;
       }
-      startFlee(now);
+      if (phase === 'shake') {
+        startFlee(now);
+      }
       return;
     }
 
@@ -542,6 +568,7 @@ export function initWichienMaat() {
   }) as EventListener);
 
   const tick = (now: number) => {
+    if (stopped) return;
     const dt = clamp((now - lastFrame) / 1000, 0.008, 0.034);
     lastFrame = now;
     const fine = pointerIsFine();
@@ -580,8 +607,8 @@ export function initWichienMaat() {
     if (phase === 'none') tryStartCatch(now, distance);
 
     if (phase === 'hold' || phase === 'shake') {
-      lurePos.x = lerp(lurePos.x, mouth.x + facing * 6, 0.45);
-      lurePos.y = lerp(lurePos.y, mouth.y + 4, 0.45);
+      lurePos.x = lerp(lurePos.x, mouth.x + facing * 4, 0.65);
+      lurePos.y = lerp(lurePos.y, mouth.y + 6, 0.65);
     } else if (phase === 'kick') {
       lurePos.x = lerp(lurePos.x, paw.x, 0.4);
       lurePos.y = lerp(lurePos.y, paw.y, 0.4);
@@ -599,9 +626,9 @@ export function initWichienMaat() {
     } else if (phase === 'leap' || phase === 'pounce') {
       catTarget = catFromLocal({ x: lurePos.x - facing * 8, y: lurePos.y + 4 }, mouthAnchor, facing);
     } else if (pinning() || phase === 'bat') {
-      catTarget = cat;
-      vel.x *= 0.7;
-      vel.y *= 0.7;
+      catTarget = { x: cat.x, y: cat.y };
+      vel.x = 0;
+      vel.y = 0;
     } else if (behavior === 'chase' || (behavior === 'play' && hunting())) {
       const standoff = hunting() ? (distance < 150 ? 22 : 36) : 28;
       catTarget = catFromLocal({ x: lurePos.x - facing * standoff, y: lurePos.y + 6 }, mouthAnchor, facing);
@@ -687,8 +714,8 @@ export function initWichienMaat() {
     root.classList.toggle('is-excited', hunting() && distance < 150);
     root.classList.toggle('is-yawning', now < yawnUntil);
 
-    requestAnimationFrame(tick);
+    raf = requestAnimationFrame(tick);
   };
 
-  requestAnimationFrame(tick);
+  raf = requestAnimationFrame(tick);
 }
