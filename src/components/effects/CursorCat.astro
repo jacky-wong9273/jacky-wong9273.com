@@ -2,7 +2,17 @@
 import CatContextMenu from './CatContextMenu.astro';
 ---
 
-<div class="cursor-cat" id="cursor-cat" aria-hidden="true" data-pose="sit" data-expr="neutral" data-lure="toy">
+<div
+  class="cursor-cat"
+  id="cursor-cat"
+  aria-hidden="true"
+  data-pose="sit"
+  data-expr="neutral"
+  data-lure="toy"
+  data-mood="hunt"
+  data-phase="none"
+  data-frame="0"
+>
   <div class="cursor-cat-trail" id="cursor-cat-trail"></div>
 
   <div class="cursor-cat-wrap">
@@ -18,12 +28,22 @@ import CatContextMenu from './CatContextMenu.astro';
       <img class="cat-pose cat-pose--sleep" src="/cat/wichien-sleep.webp" alt="" width="720" height="444" decoding="async" />
       <img class="cat-pose cat-pose--stretch" src="/cat/wichien-stretch.webp" alt="" width="720" height="299" decoding="async" />
       <img class="cat-pose cat-pose--pounce" src="/cat/wichien-pounce.webp" alt="" width="720" height="383" decoding="async" />
+      <img class="cat-pose cat-pose--leap" src="/cat/wichien-leap.webp" alt="" width="720" height="345" decoding="async" />
+      <img class="cat-pose cat-pose--hold" src="/cat/wichien-hold.webp" alt="" width="720" height="353" decoding="async" />
+      <img class="cat-pose cat-pose--bat" src="/cat/wichien-bat.webp" alt="" width="720" height="562" decoding="async" />
+      <img class="cat-pose cat-pose--kick" src="/cat/wichien-kick.webp" alt="" width="720" height="382" decoding="async" />
+      <img class="cat-pose cat-pose--walk cat-pose--walk-0" src="/cat/wichien-walk-0.webp" alt="" width="720" height="480" decoding="async" />
+      <img class="cat-pose cat-pose--walk cat-pose--walk-1" src="/cat/wichien-walk-1.webp" alt="" width="720" height="480" decoding="async" />
+      <img class="cat-pose cat-pose--walk cat-pose--walk-2" src="/cat/wichien-walk-2.webp" alt="" width="720" height="480" decoding="async" />
+      <img class="cat-pose cat-pose--walk cat-pose--walk-3" src="/cat/wichien-walk-3.webp" alt="" width="720" height="480" decoding="async" />
     </div>
   </div>
 </div>
 
-<div class="cat-lure" id="cat-lure" data-lure="toy" aria-hidden="true">
-  <img class="lure-art lure-art--toy" src="/cat/lure-bird.webp" alt="" width="256" height="216" decoding="async" />
+<div class="cat-lure" id="cat-lure" data-lure="toy" data-flap="0" aria-hidden="true">
+  <img class="lure-art lure-art--toy lure-art--flap-0" src="/cat/lure-bird.webp" alt="" width="256" height="216" decoding="async" />
+  <img class="lure-art lure-art--toy lure-art--flap-1" src="/cat/lure-bird-up.webp" alt="" width="256" height="270" decoding="async" />
+  <img class="lure-art lure-art--toy lure-art--flap-2" src="/cat/lure-bird-down.webp" alt="" width="256" height="149" decoding="async" />
   <img class="lure-art lure-art--food" src="/cat/lure-fur.webp" alt="" width="256" height="263" decoding="async" />
 </div>
 
@@ -71,18 +91,25 @@ import CatContextMenu from './CatContextMenu.astro';
     object-fit: contain;
     object-position: center bottom;
     opacity: 0;
-    visibility: hidden;
     pointer-events: none;
     user-select: none;
+    transition: opacity 0.055s linear;
   }
 
   .cursor-cat[data-pose='side'] .cat-pose--side,
   .cursor-cat[data-pose='sit'] .cat-pose--sit,
   .cursor-cat[data-pose='sleep'] .cat-pose--sleep,
   .cursor-cat[data-pose='stretch'] .cat-pose--stretch,
-  .cursor-cat[data-pose='pounce'] .cat-pose--pounce {
+  .cursor-cat[data-pose='pounce'] .cat-pose--pounce,
+  .cursor-cat[data-pose='leap'] .cat-pose--leap,
+  .cursor-cat[data-pose='hold'] .cat-pose--hold,
+  .cursor-cat[data-pose='bat'] .cat-pose--bat,
+  .cursor-cat[data-pose='kick'] .cat-pose--kick,
+  .cursor-cat[data-pose='walk'][data-frame='0'] .cat-pose--walk-0,
+  .cursor-cat[data-pose='walk'][data-frame='1'] .cat-pose--walk-1,
+  .cursor-cat[data-pose='walk'][data-frame='2'] .cat-pose--walk-2,
+  .cursor-cat[data-pose='walk'][data-frame='3'] .cat-pose--walk-3 {
     opacity: 1;
-    visibility: visible;
   }
 
   .cat-zzz {
@@ -126,21 +153,45 @@ import CatContextMenu from './CatContextMenu.astro';
     animation: maat-groom-photo 1.8s ease-in-out infinite;
   }
 
-  .cursor-cat.is-moving .cursor-cat-sprite {
-    animation: maat-chase-run var(--gait, 0.7s) ease-in-out infinite;
+  .cursor-cat[data-mood='hunt'].is-moving .cursor-cat-sprite {
+    animation: maat-hunt-bob var(--gait, 0.55s) ease-in-out infinite;
   }
 
-  .cursor-cat.is-pouncing .cursor-cat-sprite {
-    transform: scaleX(1.06) scaleY(0.9);
+  .cursor-cat[data-mood='play'].is-moving .cursor-cat-sprite {
+    animation: maat-play-hop var(--gait, 0.48s) ease-in-out infinite;
+  }
+
+  .cursor-cat[data-phase='pounce'] .cursor-cat-sprite {
     animation: none;
+    transform: scaleX(1.05) scaleY(0.92);
   }
 
-  .cursor-cat.is-jamming .cursor-cat-sprite {
-    animation: maat-jam-shake 0.22s ease-in-out infinite;
+  .cursor-cat[data-phase='leap'] .cursor-cat-sprite {
+    animation: maat-leap-stretch 0.28s ease-out;
   }
 
-  .cursor-cat.is-fleeing .cursor-cat-sprite {
-    animation: maat-chase-run 0.3s ease-in-out infinite;
+  .cursor-cat[data-phase='hold'] .cursor-cat-sprite {
+    animation: maat-prey-hold 0.34s ease-in-out infinite;
+  }
+
+  .cursor-cat[data-phase='shake'] .cursor-cat-sprite {
+    animation: maat-prey-shake 0.16s ease-in-out infinite;
+  }
+
+  .cursor-cat[data-phase='bat'] .cursor-cat-sprite {
+    animation: maat-bat-swipe 0.34s ease-out;
+  }
+
+  .cursor-cat[data-phase='kick'] .cursor-cat-sprite {
+    animation: maat-play-kick 0.22s ease-in-out infinite;
+  }
+
+  .cursor-cat[data-phase='flee'][data-mood='play'] .cursor-cat-sprite {
+    animation: maat-play-hop 0.3s ease-in-out infinite;
+  }
+
+  .cursor-cat[data-phase='flee'][data-mood='hunt'] .cursor-cat-sprite {
+    animation: maat-hunt-bob 0.28s ease-in-out infinite;
   }
 
   .cursor-cat.is-excited .cursor-cat-sprite {
@@ -181,31 +232,41 @@ import CatContextMenu from './CatContextMenu.astro';
     opacity: 0;
     pointer-events: none;
     user-select: none;
+    transition: opacity 0.05s linear;
   }
 
-  .cat-lure[data-lure='toy'] .lure-art--toy,
   .cat-lure[data-lure='food'] .lure-art--food {
     opacity: 1;
   }
 
+  .cat-lure[data-lure='toy'][data-flap='0'] .lure-art--flap-0,
+  .cat-lure[data-lure='toy'][data-flap='1'] .lure-art--flap-1,
+  .cat-lure[data-lure='toy'][data-flap='2'] .lure-art--flap-2 {
+    opacity: 1;
+  }
+
   .cat-lure.is-running[data-lure='toy'] .lure-art--toy {
-    animation: lure-bird-flap 0.28s ease-in-out infinite;
+    animation: lure-bird-hover 0.28s ease-in-out infinite;
   }
 
   .cat-lure.is-running[data-lure='food'] .lure-art--food {
     animation: lure-fur-bounce 0.42s ease-in-out infinite;
   }
 
-  .cat-lure.is-batted .lure-art {
+  .cat-lure.is-batted[data-lure='food'] .lure-art--food {
     animation: lure-bonk 0.32s ease-out;
   }
 
-  .cat-lure.is-jammed[data-lure='toy'] .lure-art--toy {
-    animation: lure-struggle 0.22s ease-in-out infinite;
+  .cat-lure.is-tossed[data-lure='food'] .lure-art--food {
+    animation: lure-fur-spin 0.55s ease-out;
   }
 
-  .cat-lure.is-jammed[data-lure='food'] .lure-art--food {
-    animation: lure-fur-squish 0.26s ease-in-out infinite;
+  .cat-lure.is-caught[data-lure='toy'] .lure-art--toy {
+    animation: lure-struggle 0.14s ease-in-out infinite;
+  }
+
+  .cat-lure.is-caught[data-lure='food'] .lure-art--food {
+    animation: lure-fur-squish 0.2s ease-in-out infinite;
   }
 
   .cat-jam-catcher {
@@ -241,8 +302,10 @@ import CatContextMenu from './CatContextMenu.astro';
   @media (prefers-reduced-motion: reduce) {
     .cursor-cat-wrap,
     .cursor-cat-sprite,
-    .lure-art {
+    .lure-art,
+    .cat-pose {
       animation: none !important;
+      transition: none !important;
     }
   }
 </style>
